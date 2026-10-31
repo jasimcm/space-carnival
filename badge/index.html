@@ -327,7 +327,7 @@
   .admit .how li { counter-increment: h; position: relative; padding-left: 40px; line-height: 1.45; }
   .admit .how li::before { content: counter(h); position: absolute; left: 0; top: -1px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #c0328c; color: #fff; font-weight: 800; font-size: 14px; }
   .admit .tree { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: rgba(21, 16, 51, .08); font: 500 13.5px/1.6 ui-monospace, "SF Mono", Menlo, monospace; color: var(--ink); overflow-x: auto; white-space: pre; }
-  .admit .wins a { color: #c0328c; font-weight: 600; }
+  .admit .wins a, .admit .how a { color: #c0328c; font-weight: 600; }
   .admit .in > div { min-width: 0; } /* let the layout box scroll instead of widening the ticket */
   .admit .side { text-align: center; }
   .admit .closes { font-style: italic; font-size: 18px; }
@@ -638,7 +638,7 @@
             <div>
               <h2>Your design</h2>
               <ol class="how">
-                <li><b>Make a public GitHub repo</b> for your badge.</li>
+                <li><b>Make a public GitHub repo</b> for your badge. Easiest: <a href="https://github.com/jasimcm/space-carnival-badge-template/generate" target="_blank" rel="noopener">start from our template</a>, which has the README, BOM sheet and folders ready.</li>
                 <li><b>Put everything in it:</b> the schematic, Gerbers (zipped), a BOM with quantities, unit prices at 300 units and source links, a render or photo, and a README about your idea.</li>
                 <li><b>Submit the repo link</b> on the TinkerHub app.</li>
               </ol>
