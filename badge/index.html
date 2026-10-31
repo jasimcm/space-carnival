@@ -137,57 +137,23 @@
   }
   .lab-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .lab-top, .lab-spin, .lab-bar { position: absolute; z-index: 2; }
-  .lab-top { top: 18px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
-  .lab-steps { list-style: none; display: flex; gap: 10px; }
-  .lab-steps li {
-    position: relative; width: 62px; height: 62px; border-radius: 16px; display: grid; place-content: center; justify-items: center; gap: 4px;
-    font-size: 10px; font-weight: 700; letter-spacing: .01em; color: rgba(21, 16, 51, .45);
-    background: rgba(255, 255, 255, .38); -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 0 0 1px rgba(255, 255, 255, .6), 0 6px 16px rgba(30, 50, 120, .12);
-    transition: transform .35s cubic-bezier(.3, 1.5, .5, 1), background .3s, color .3s;
-  }
-  .lab-steps svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-  .lab-steps li.on { background: rgba(255, 255, 255, .88); color: var(--ink); }
-  .lab-steps li.on::after { /* done tick */
-    content: ""; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-radius: 50%;
-    background: #22b573 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
-  }
-  .lab-steps li.now { background: var(--ink); color: var(--yellow); transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 22px rgba(21, 16, 51, .35), 0 0 0 3px rgba(255, 73, 180, .55); }
-  .lab.is-lit .lab-steps li { animation: tilehue 3s linear infinite; }
-  .lab.is-lit .lab-steps li:nth-child(2) { animation-delay: -.6s; } .lab.is-lit .lab-steps li:nth-child(3) { animation-delay: -1.2s; }
-  .lab.is-lit .lab-steps li:nth-child(4) { animation-delay: -1.8s; } .lab.is-lit .lab-steps li:nth-child(5) { animation-delay: -2.4s; }
-  @keyframes tilehue { 0%, 100% { box-shadow: 0 0 0 3px #ff49b4, 0 0 18px #ff49b4; } 25% { box-shadow: 0 0 0 3px #ffcf5a, 0 0 18px #ffcf5a; } 50% { box-shadow: 0 0 0 3px #59c3ff, 0 0 18px #59c3ff; } 75% { box-shadow: 0 0 0 3px #8be08b, 0 0 18px #8be08b; } }
-  .lab-spin { right: 22px; bottom: 24px; font-style: italic; font-size: 13px; color: rgba(21, 16, 51, .5); transition: opacity .4s; pointer-events: none; }
-  .lab.touched .lab-spin { opacity: 0; }
+  .lab-top { position: absolute; z-index: 2; }
+  /* progress: one quiet line of text, in the page's own type */
+  .lab-top { top: 52px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
+  .lab-steps { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 18px; font-size: 15px; font-style: italic; color: rgba(21, 16, 51, .38); }
+  .lab-steps b { font-style: normal; font-weight: 800; margin-right: 2px; }
+  .lab-steps li { transition: color .3s; }
+  .lab-steps li.on { color: var(--ink); }
+  .lab-steps li.now { color: var(--pink); font-weight: 800; font-style: normal; letter-spacing: -.01em; }
+  .lab.is-lit .lab-steps li { color: var(--pink); }
 
-  /* Apple-style floating toolbar: frosted icon pill + one dark primary pill */
-  .lab-bar { left: 50%; bottom: 18px; translate: -50% 0; display: flex; align-items: center; gap: 10px; }
-  .tools-pill {
-    display: flex; gap: 2px; padding: 5px; border-radius: 999px;
-    background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
-    box-shadow: 0 10px 28px rgba(30, 50, 120, .18), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 0 0 1px rgba(255, 255, 255, .55), 0 0 0 1px rgba(21, 16, 51, .06);
-  }
-  .tool-btn { position: relative; width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: background .2s, transform .2s; }
-  .tool-btn svg, .go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .tool-btn:hover { background: rgba(21, 16, 51, .08); }
-  .tool-btn:active { transform: scale(.92); }
-  .tool-btn::after { /* tooltip */
-    content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; white-space: nowrap;
-    background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s, translate .15s;
-  }
-  .tool-btn:hover::after, .tool-btn:focus-visible::after { opacity: 1; translate: -50% 0; }
-  .go {
-    display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 20px 0 24px; border: 0; border-radius: 999px; cursor: pointer;
-    background: var(--ink); color: var(--yellow); font: 700 15px/1 "Poppins", sans-serif; white-space: nowrap;
-    box-shadow: 0 12px 26px rgba(21, 16, 51, .35), inset 0 1px 0 rgba(255, 255, 255, .18); transition: transform .2s, box-shadow .2s;
-  }
-  .go:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(21, 16, 51, .4), inset 0 1px 0 rgba(255, 255, 255, .18); }
-  .go:active { transform: scale(.97); }
-  .lab:not(.touched) .go { animation: nudge 2.4s ease-in-out infinite; }
-  @keyframes nudge { 0%, 100% { box-shadow: 0 12px 26px rgba(21, 16, 51, .35), 0 0 0 0 rgba(255, 73, 180, .5); } 50% { box-shadow: 0 12px 26px rgba(21, 16, 51, .35), 0 0 0 10px rgba(255, 73, 180, 0); } }
-  .tool-btn:focus-visible, .go:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+  /* controls: the page's yellow button, extras as small text links */
+  .lab-bar { position: relative; z-index: 2; display: grid; justify-items: center; gap: 12px; margin-top: -64px; }
+  .lab-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 4px 10px; font-style: italic; font-size: 14px; color: rgba(21, 16, 51, .45); }
+  .lab-links button { border: 0; background: none; padding: 2px 0; font: inherit; color: var(--ink); cursor: pointer; text-decoration: underline; text-decoration-color: rgba(21, 16, 51, .25); text-underline-offset: 4px; }
+  .lab-links button:hover, .lab-links button:focus-visible { color: var(--pink); text-decoration-color: currentColor; outline: none; }
+  .lab-spin { transition: opacity .4s; }
+  .lab.touched .lab-spin { opacity: .5; }
 
   .lab-fallback { display: none; }
   .lab.no-webgl .lab-fallback { display: block; }
@@ -390,14 +356,9 @@
     .tickets, .tools, .neons { grid-template-columns: 1fr; }
     .bulb-steps { grid-template-columns: 1fr 1fr; }
     .lab-steps li { font-size: 10.5px; }
-    .tool-btn { width: 40px; height: 40px; }
-    .go { height: 48px; padding: 0 16px 0 18px; font-size: 14px; }
-    .lab-bar { bottom: 14px; gap: 8px; }
+    .lab-bar { margin-top: -40px; }
     .lab-top { top: 14px; }
-    .lab-steps { gap: 7px; }
-    .lab-steps li { width: 54px; height: 54px; border-radius: 14px; font-size: 9px; }
-    .lab-steps svg { width: 19px; height: 19px; }
-    .lab-spin { display: none; }
+    .lab-steps { gap: 2px 12px; font-size: 12.5px; padding: 0 12px; }
     .ask { padding: 56px 34px 50px; }
     .admit { grid-template-columns: 56px 1fr; -webkit-mask-position: top, bottom; }
     .admit { -webkit-mask: radial-gradient(circle 14px at 56px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 14px at 56px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
@@ -412,7 +373,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .gridbg i { animation: none; opacity: .18; }
-    .cloud, .lights circle, .neon, .lab-steps li, .go { animation: none !important; }
+    .cloud, .lights circle, .neon, .lab-steps li { animation: none !important; }
     .wheel { transition: none; }
   }
 </style>
@@ -464,22 +425,15 @@
             <div class="lab-top">
               <span class="sr" data-steplabel aria-live="polite">Step 1 of 5</span>
               <ol class="lab-steps" aria-label="Build steps">
-                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12a4 4 0 0 1 8 0v4H8zM6.5 16h11M10.5 16v5M13.5 16v3.5"/></svg><span>LEDs</span></li>
-                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 7.5A8 8 0 1 0 20 12h-4.5M12 9a3 3 0 1 0 0 6"/></svg><span>Holder</span></li>
-                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5 9 15M8 14l2 2 9-9-2-2zM15 5l4 4"/></svg><span>Solder</span></li>
-                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 9v6M9 12h6"/></svg><span>Coin cell</span></li>
-                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></svg><span>Light up</span></li>
-              </ol>
+              <li><b>1</b> LEDs</li><li><b>2</b> Holder</li><li><b>3</b> Solder</li><li><b>4</b> Coin cell</li><li><b>5</b> Light up</li>
+            </ol>
             </div>
-            <span class="lab-spin">drag to spin</span>
-            <div class="lab-bar">
-              <div class="tools-pill">
-                <button class="tool-btn" data-act="flip" aria-label="Flip the board" data-tip="Flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6M20 12a8 8 0 0 1-13.7 5.6M18 2.5v4.2h-4.2M6 21.5v-4.2h4.2"/></svg></button>
-                <button class="tool-btn" data-act="auto" aria-label="Build it for me" data-tip="Build it for me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 14 10M15 3.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1zM19.5 11.5l.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6z"/></svg></button>
-                <button class="tool-btn" data-act="reset" aria-label="Start over" data-tip="Start over"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4v5h5M4.2 9A8 8 0 1 1 5 16.5"/></svg></button>
-              </div>
-              <button class="go" data-act="do"><span data-cap>Start building</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
-            </div>
+          </div>
+          <div class="lab-bar">
+            <button class="btn btn-yellow go" data-act="do"><span data-cap>Place LEDs</span> →</button>
+            <p class="lab-links">
+              <button data-act="flip">flip</button><span aria-hidden="true">·</span><button data-act="auto">build it for me</button><span aria-hidden="true">·</span><button data-act="reset">start over</button><span aria-hidden="true">·</span><span class="lab-spin">drag to spin</span>
+            </p>
           </div>
           <p class="lab-hint" aria-live="polite">Loading the badge…</p>
           <figure class="lab-fallback"><img src="../assets/badge/photo-front.webp" alt="The 2025 Space Carnival badge" width="800" height="769"></figure>
