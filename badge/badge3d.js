@@ -9,7 +9,8 @@ const root = document.getElementById('lab');
 const stage = root.querySelector('.lab-stage');
 const hintEl = root.querySelector('.lab-hint');
 const doBtn = root.querySelector('[data-act="do"]');
-const bulbs = [...root.querySelectorAll('.lab-steps li')];
+const statusEl = root.querySelector('[data-status]');
+const countEl = root.querySelector('[data-count]');
 
 const STEPS = [
   { id: 'leds', hint: 'Last year\'s badge, from its real Gerber files. Press <b>Place LEDs</b> or tap a glowing hole. Long leg goes in <b>+</b>.', act: 'Place LEDs' },
@@ -18,6 +19,26 @@ const STEPS = [
   { id: 'cell', hint: 'Last bit: slide the <b>CR2032</b> into the holder.', act: 'Insert cell' },
   { id: 'lit', hint: '<b>It lives!</b> Two self-cycling RGB LEDs, one coin cell. Your turn to design the next one.', act: 'Build again' },
 ];
+
+// what the status line says while each step is waiting — rotates like a "thinking" line
+const STATUS = {
+  leds: ['Sorting LEDs by leg length…', 'Finding the + hole…', 'Bending the legs just so…', 'Waiting for your LEDs…'],
+  holder: ['Flipping to the back…', 'Lining up the coin-cell holder…', 'Matching it to the silkscreen circle…'],
+  solder: ['Heating the iron to 350 °C…', 'Tinning the tip…', 'Flowing solder into the joint…', 'Waiting for the smoke to clear…', 'Checking for shiny volcanoes…'],
+  cell: ['Fetching a fresh CR2032…', 'Checking the + side faces up…', 'Sliding it under the clip…'],
+  lit: ['It lives! Cycling through every colour…', 'Two RGB LEDs, one coin cell, zero bugs…', 'Now go design the next one…'],
+};
+let statusList = STATUS.leds, statusI = 0, statusFor = '';
+function showStatus() {
+  statusEl.classList.remove('in'); void statusEl.offsetWidth; // restart the fade
+  statusEl.textContent = statusList[statusI % statusList.length];
+  statusEl.classList.add('in');
+}
+setInterval(() => { statusI++; showStatus(); }, 2600);
+const SPIN = '·✢✳✶✻✽✻✶✳✢';
+let spinI = 0;
+const spinEl = root.querySelector('.lab-status .spin');
+setInterval(() => { spinEl.textContent = SPIN[spinI++ % SPIN.length]; }, 130);
 
 // board-local positions, origin at the board centre (from Gerber / pick-and-place, board corner at 10.51, 73.347)
 const toLocal = (x, y) => new THREE.Vector2(x - 10.51 - 20, y - 73.347 - 20);
@@ -309,7 +330,8 @@ function refresh() {
   hintEl.innerHTML = s.hint;
   root.querySelector('[data-cap]').textContent = s.act;
   root.querySelector('[data-steplabel]').textContent = lit ? 'It lives!' : `Step ${step + 1} of 5`;
-  bulbs.forEach((b, i) => { b.classList.toggle('on', i < step || lit); b.classList.toggle('now', i === step && !lit); });
+  countEl.textContent = `${Math.min(step + 1, 5)}/5`;
+  if (statusFor !== s.id) { statusFor = s.id; statusList = STATUS[s.id]; statusI = 0; showStatus(); }
   tapTargets = parts.markers.filter(m => m.visible && m.parent);
   if (s.id === 'cell') tapTargets.push(parts.holder);
 }
