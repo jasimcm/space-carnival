@@ -321,10 +321,14 @@
             mask: radial-gradient(circle 20px at 120px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 20px at 120px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
   }
   .admit .stub { border-right: 3px dashed rgba(21, 16, 51, .3); display: grid; place-items: center; writing-mode: vertical-rl; transform: rotate(180deg); font-family: "Shrikhand", serif; font-size: 34px; color: #c0328c; }
-  .admit .in { padding: clamp(26px, 4vw, 48px); display: grid; grid-template-columns: 1.2fr .8fr; gap: 30px; align-items: center; }
+  .admit .in { min-width: 0; padding: clamp(26px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 30px; align-items: center; }
   .admit h2 { font-family: "Shrikhand", serif; font-weight: 400; color: var(--sky-deep); font-size: clamp(36px, 5vw, 64px); line-height: 1; }
-  .admit ul { list-style: none; margin-top: 16px; display: grid; gap: 6px; }
-  .admit li::before { content: "✦"; color: #c0328c; margin-right: 10px; }
+  .admit .how { list-style: none; counter-reset: h; margin-top: 18px; display: grid; gap: 10px; }
+  .admit .how li { counter-increment: h; position: relative; padding-left: 40px; line-height: 1.45; }
+  .admit .how li::before { content: counter(h); position: absolute; left: 0; top: -1px; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: #c0328c; color: #fff; font-weight: 800; font-size: 14px; }
+  .admit .tree { margin-top: 18px; padding: 14px 18px; border-radius: 12px; background: rgba(21, 16, 51, .08); font: 500 13.5px/1.6 ui-monospace, "SF Mono", Menlo, monospace; color: var(--ink); overflow-x: auto; white-space: pre; }
+  .admit .wins a { color: #c0328c; font-weight: 600; }
+  .admit .in > div { min-width: 0; } /* let the layout box scroll instead of widening the ticket */
   .admit .side { text-align: center; }
   .admit .closes { font-style: italic; font-size: 18px; }
   .admit .closes b { display: block; font-style: italic; font-size: 64px; letter-spacing: -.07em; line-height: 1; color: var(--ink); }
@@ -347,7 +351,7 @@
     .neons, .pins { grid-template-columns: 1fr 1fr; }
     .bulb-steps { grid-template-columns: repeat(3, 1fr); row-gap: 30px; }
     .bulb-steps::before { display: none; }
-    .admit .in { grid-template-columns: 1fr; }
+    .admit .in { grid-template-columns: minmax(0, 1fr); }
     .meter { position: relative; top: 0; }
     .pins { margin-top: 0; row-gap: 40px; }
     .wire .lights { display: none; }
@@ -365,7 +369,8 @@
     .lab-top { top: 14px; }
     .lab-status { font-size: 13.5px; gap: 8px; }
     .ask { padding: 56px 34px 50px; }
-    .admit { grid-template-columns: 56px 1fr; -webkit-mask-position: top, bottom; }
+    .admit .tree { font-size: 11.5px; padding: 12px 14px; }
+    .admit { grid-template-columns: 56px minmax(0, 1fr); -webkit-mask-position: top, bottom; }
     .admit { -webkit-mask: radial-gradient(circle 14px at 56px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 14px at 56px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
                      mask: radial-gradient(circle 14px at 56px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 14px at 56px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
     .admit .stub { font-size: 22px; }
@@ -456,7 +461,7 @@
           </div>
           <div>
             <p class="body-copy"><b style="color:#fff">Who can join:</b> anyone. Students, makers, first-timers. No PCB experience needed.</p>
-            <p class="body-copy"><b style="color:#fff">What you send:</b> a schematic, the PCB layout (Gerbers), a BOM with prices, and a render or photo of the badge.</p>
+            <p class="body-copy"><b style="color:#fff">What you send:</b> a public GitHub repo with your schematic, Gerbers, a BOM with prices and a render or photo, submitted as a link on the TinkerHub app.</p>
           </div>
         </div>
 
@@ -632,16 +637,22 @@
           <div class="in">
             <div>
               <h2>Your design</h2>
-              <ul>
-                <li>Schematic</li>
-                <li>PCB layout (Gerbers)</li>
-                <li>BOM with quantities, unit prices at 300 units and source links</li>
-                <li>A render or photo of the badge</li>
-              </ul>
+              <ol class="how">
+                <li><b>Make a public GitHub repo</b> for your badge.</li>
+                <li><b>Put everything in it:</b> the schematic, Gerbers (zipped), a BOM with quantities, unit prices at 300 units and source links, a render or photo, and a README about your idea.</li>
+                <li><b>Submit the repo link</b> on the TinkerHub app.</li>
+              </ol>
+              <pre class="tree" aria-label="Suggested repo layout">your-badge/
+├─ README.md     idea, theme, how it works
+├─ schematic/    PDF + source files
+├─ gerber/       Gerber zip for Lion Circuits
+├─ bom.csv       qty, unit price @300, source link
+└─ images/       render or photo</pre>
             </div>
             <div class="side">
               <p class="closes">submissions close<b>Nov 21</b></p>
-              <a class="btn btn-pink" href="https://chodhyam.tinkerhub.org/nc/form/04c9ef4e-565c-415a-890a-8216d564abe2" target="_blank" rel="noopener">Submit your design ↗</a>
+              <a class="btn btn-pink" href="https://chodhyam.tinkerhub.org/nc/form/04c9ef4e-565c-415a-890a-8216d564abe2" target="_blank" rel="noopener">Submit on TinkerHub ↗</a>
+              <p class="wins">Need an example? <a href="https://github.com/salmanfarisvp/space-carnival-badge-2025" target="_blank" rel="noopener">Last year's badge repo</a> is laid out the same way.</p>
               <p class="wins">The winning design is made for every attendee, with your name on it.</p>
             </div>
           </div>
@@ -750,9 +761,10 @@
 
   // floating submit button once you're past the hero
   const fs = document.querySelector('.float-submit');
-  new IntersectionObserver(([e]) => fs.classList.toggle('show', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(document.querySelector('.hero'));
-  const sub = new IntersectionObserver(([e]) => e.isIntersecting && fs.classList.remove('show'));
-  sub.observe(document.getElementById('submit'));
+  let pastHero = false, atSubmit = false;
+  const sync = () => fs.classList.toggle('show', pastHero && !atSubmit);
+  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting && e.boundingClientRect.top < 0; sync(); }).observe(document.querySelector('.hero'));
+  new IntersectionObserver(([e]) => { atSubmit = e.isIntersecting; sync(); }).observe(document.getElementById('submit'));
 
   document.querySelectorAll('[aria-disabled="true"]').forEach(b => b.addEventListener('click', e => e.preventDefault()));
 </script>
