@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badge Design Competition — Space Carnival</title>
+<meta name="description" content="Design the official PCB badge for TinkerSpace Kochi's Space Carnival. Under ₹50, inside 40 × 40 mm, soldered by every attendee. Submissions close Nov 21, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,800;1,300;1,400;1,800&family=Shrikhand&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #36569b;
+    --sky-deep: #24407f;
+    --night: #1a2c63;
+    --pink: #ff49b4;
+    --yellow: #f8e27c;
+    --gold: #ffcf5a;
+    --ticket: #fbe9a6;
+    --ink: #151033;
+    --white: #fff;
+    --soft: rgba(255, 255, 255, .78);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: linear-gradient(180deg, var(--sky) 0, var(--sky-deep) 1400px, var(--night) 100%) var(--night);
+    color: var(--white); font-family: "Poppins", system-ui, sans-serif; font-size: 17px; line-height: 1.6;
+    overflow-x: hidden;
+  }
+  /* paper grain, same as the landing page */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: .26; mix-blend-mode: multiply;
+  }
+  img { display: block; max-width: 100%; height: auto; }
+
+  /* faint blueprint grid, like tinkerhub.org/donate, with a few cells glowing in carnival colours */
+  body { position: relative; --cell: 42px; }
+  .gridbg {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    background-image: linear-gradient(rgba(255, 255, 255, .075) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .075) 1px, transparent 1px);
+    background-size: var(--cell) var(--cell);
+    -webkit-mask-image: linear-gradient(#000, rgba(0, 0, 0, .6) 1100px, rgba(0, 0, 0, .35));
+            mask-image: linear-gradient(#000, rgba(0, 0, 0, .6) 1100px, rgba(0, 0, 0, .35));
+  }
+  .gridbg i { position: absolute; width: calc(var(--cell) - 1px); height: calc(var(--cell) - 1px); background: var(--c); opacity: 0; animation: cell 9s ease-in-out infinite; animation-delay: var(--d); }
+  @keyframes cell { 0%, 100% { opacity: 0; } 40%, 60% { opacity: .26; } }
+  body > header, body > main, body > footer { position: relative; z-index: 1; }
+  a { color: var(--yellow); text-underline-offset: 3px; }
+  .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+
+  /* the poster's groovy lettering: halftone yellow, ink outline, pink extrusion */
+  .groovy {
+    font-family: "Shrikhand", Georgia, serif; font-weight: 400; line-height: .98; letter-spacing: .005em;
+    color: var(--yellow);
+    background: radial-gradient(circle, rgba(231, 150, 30, .38) 1px, transparent 1.6px) 0 0 / 5px 5px, var(--yellow);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    filter: drop-shadow(1.5px 0 0 var(--ink)) drop-shadow(-1.5px 0 0 var(--ink)) drop-shadow(0 1.5px 0 var(--ink)) drop-shadow(0 -1.5px 0 var(--ink)) drop-shadow(3px 5px 0 var(--pink)) drop-shadow(1px 1.5px 0 var(--ink));
+  }
+  .whisper { font-style: italic; font-weight: 300; font-size: clamp(20px, 2.2vw, 28px); letter-spacing: -.02em; line-height: 1.15; }
+  .whisper em, .say em { font-style: normal; font-weight: 800; color: var(--pink); letter-spacing: -.04em; }
+  .say { font-style: italic; font-weight: 300; font-size: clamp(30px, 4.6vw, 62px); line-height: 1.08; letter-spacing: -.035em; }
+  .body-copy { color: var(--soft); max-width: 60ch; }
+  .body-copy + .body-copy { margin-top: 10px; }
+  h2.groovy { font-size: clamp(42px, 6vw, 82px); margin-bottom: 22px; }
+  h3 { font-size: 20px; line-height: 1.25; }
+
+  .cloud { position: absolute; fill: var(--sky); stroke: #fff; stroke-width: 4.5; stroke-linejoin: round; animation: drift 8s ease-in-out infinite; pointer-events: none; }
+  @keyframes drift { 50% { transform: translateX(16px); } }
+
+  /* string lights (bulbs are placed along the wire by script) */
+  .lights { display: block; width: 100%; height: 90px; overflow: visible; pointer-events: none; }
+  .lights path { fill: none; stroke: #0f1736; stroke-width: 2; }
+  .lights circle { fill: var(--gold); filter: drop-shadow(0 0 5px rgba(255, 207, 90, .95)) drop-shadow(0 0 12px rgba(255, 170, 60, .6)); animation: twinkle 3s ease-in-out infinite; }
+  @keyframes twinkle { 50% { opacity: .55; } }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; border: 0; cursor: pointer; text-decoration: none;
+    font: 800 16px/1 "Poppins", sans-serif; letter-spacing: -.01em; padding: 15px 24px; border-radius: 99px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+  .btn-yellow { background: var(--yellow); color: var(--ink); box-shadow: 0 4px 0 #c79c2a; }
+  .btn-pink { background: var(--pink); color: #fff; box-shadow: 0 4px 0 #b3237c; }
+  .btn-ghost { background: transparent; color: #fff; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .7); }
+
+  /* ---------- top ---------- */
+  .top { position: relative; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 26px; }
+  .top .logo { width: clamp(150px, 18vw, 230px); }
+  .top nav { display: flex; align-items: center; gap: 22px; font-weight: 600; font-size: 15px; }
+  .top nav a { text-decoration: none; }
+  .top nav a:hover { color: var(--yellow); }
+
+  /* ---------- hero ---------- */
+  /* hero: white with a touch of blue, fading down into the night sky */
+  .hero {
+    position: relative; padding-bottom: 150px; color: var(--ink); z-index: 1;
+    background:
+      linear-gradient(rgba(26, 38, 110, .06) 1px, transparent 1px) 0 0 / var(--cell) var(--cell),
+      linear-gradient(90deg, rgba(26, 38, 110, .06) 1px, transparent 1px) 0 0 / var(--cell) var(--cell),
+      radial-gradient(55% 45% at 72% 38%, rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 70%),
+      linear-gradient(180deg, #ffffff 0%, #f1f5ff 40%, #d3e0ff 66%, rgba(143, 169, 230, .75) 84%, rgba(54, 86, 155, 0) 100%);
+  }
+  .hero .whisper, .hero .date small { color: var(--ink); }
+  .hero .date .day { color: #fff; }
+  .hero .btn-ghost { color: var(--ink); box-shadow: inset 0 0 0 2px rgba(21, 16, 51, .55); }
+  .hero .cloud { fill: #fff; stroke: #1a266e; }
+  .hero .lights path { stroke: #1a266e; }
+  .top nav a { color: var(--ink); }
+  .top nav a:hover { color: var(--pink); }
+  .hero .lab-hint { color: rgba(21, 16, 51, .7); }
+  .hero .lab-hint b { color: var(--ink); }
+  .hero > .lights { position: absolute; top: 84px; left: 0; }
+  .hero-grid { position: relative; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 24px; align-items: center; margin-top: 70px; }
+  /* inline-block + nowrap so the box grows with the words: the halftone fill only paints inside the box */
+  .hero h1 { display: inline-block; white-space: nowrap; font-size: clamp(40px, 5.2vw, 78px); margin: 10px 0 18px; }
+  h2.groovy { display: inline-block; }
+  .date { display: flex; align-items: flex-end; gap: 16px; margin: 26px 0 30px; }
+  .date .mon { color: var(--pink); font-weight: 800; font-size: clamp(54px, 6vw, 80px); letter-spacing: -.08em; line-height: .8; }
+  .date .day { font-style: italic; font-weight: 800; font-size: clamp(64px, 7vw, 96px); letter-spacing: -.08em; line-height: .78; -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; text-shadow: 3px 4px 0 var(--ink); }
+  .date small { font-style: italic; font-weight: 300; font-size: 18px; line-height: 1.1; padding-bottom: 6px; }
+  .hero .btns { display: flex; flex-wrap: wrap; gap: 14px; }
+
+  /* the 3D build lab: a cream cutting mat so the blue board stands out */
+  .lab { position: relative; }
+  .lab-stage {
+    position: relative; height: clamp(470px, 50vw, 600px); touch-action: pan-y; color: var(--ink);
+    /* soft white-to-blue studio gradient, so the blue board reads clearly */
+  }
+  .lab-stage::before { /* floor shadow under the floating board */
+    content: ""; position: absolute; left: 50%; bottom: 17%; width: 44%; height: 26px; translate: -50% 0; z-index: 0;
+    background: radial-gradient(closest-side, rgba(24, 44, 120, .3), transparent); filter: blur(4px);
+  }
+  .lab-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .lab-top, .lab-spin, .lab-bar { position: absolute; z-index: 2; }
+  .lab-top { top: 18px; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none; }
+  .lab-steps { list-style: none; display: flex; gap: 10px; }
+  .lab-steps li {
+    position: relative; width: 62px; height: 62px; border-radius: 16px; display: grid; place-content: center; justify-items: center; gap: 4px;
+    font-size: 10px; font-weight: 700; letter-spacing: .01em; color: rgba(21, 16, 51, .45);
+    background: rgba(255, 255, 255, .38); -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 0 0 1px rgba(255, 255, 255, .6), 0 6px 16px rgba(30, 50, 120, .12);
+    transition: transform .35s cubic-bezier(.3, 1.5, .5, 1), background .3s, color .3s;
+  }
+  .lab-steps svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .lab-steps li.on { background: rgba(255, 255, 255, .88); color: var(--ink); }
+  .lab-steps li.on::after { /* done tick */
+    content: ""; position: absolute; top: -5px; right: -5px; width: 18px; height: 18px; border-radius: 50%;
+    background: #22b573 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .2);
+  }
+  .lab-steps li.now { background: var(--ink); color: var(--yellow); transform: translateY(-3px) scale(1.06); box-shadow: 0 10px 22px rgba(21, 16, 51, .35), 0 0 0 3px rgba(255, 73, 180, .55); }
+  .lab.is-lit .lab-steps li { animation: tilehue 3s linear infinite; }
+  .lab.is-lit .lab-steps li:nth-child(2) { animation-delay: -.6s; } .lab.is-lit .lab-steps li:nth-child(3) { animation-delay: -1.2s; }
+  .lab.is-lit .lab-steps li:nth-child(4) { animation-delay: -1.8s; } .lab.is-lit .lab-steps li:nth-child(5) { animation-delay: -2.4s; }
+  @keyframes tilehue { 0%, 100% { box-shadow: 0 0 0 3px #ff49b4, 0 0 18px #ff49b4; } 25% { box-shadow: 0 0 0 3px #ffcf5a, 0 0 18px #ffcf5a; } 50% { box-shadow: 0 0 0 3px #59c3ff, 0 0 18px #59c3ff; } 75% { box-shadow: 0 0 0 3px #8be08b, 0 0 18px #8be08b; } }
+  .lab-spin { right: 22px; bottom: 24px; font-style: italic; font-size: 13px; color: rgba(21, 16, 51, .5); transition: opacity .4s; pointer-events: none; }
+  .lab.touched .lab-spin { opacity: 0; }
+
+  /* Apple-style floating toolbar: frosted icon pill + one dark primary pill */
+  .lab-bar { left: 50%; bottom: 18px; translate: -50% 0; display: flex; align-items: center; gap: 10px; }
+  .tools-pill {
+    display: flex; gap: 2px; padding: 5px; border-radius: 999px;
+    background: rgba(255, 255, 255, .55); -webkit-backdrop-filter: blur(18px) saturate(180%); backdrop-filter: blur(18px) saturate(180%);
+    box-shadow: 0 10px 28px rgba(30, 50, 120, .18), inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 0 0 1px rgba(255, 255, 255, .55), 0 0 0 1px rgba(21, 16, 51, .06);
+  }
+  .tool-btn { position: relative; width: 42px; height: 42px; border: 0; border-radius: 50%; background: transparent; color: var(--ink); cursor: pointer; display: grid; place-items: center; transition: background .2s, transform .2s; }
+  .tool-btn svg, .go svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tool-btn:hover { background: rgba(21, 16, 51, .08); }
+  .tool-btn:active { transform: scale(.92); }
+  .tool-btn::after { /* tooltip */
+    content: attr(data-tip); position: absolute; bottom: calc(100% + 10px); left: 50%; translate: -50% 4px; white-space: nowrap;
+    background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 8px; opacity: 0; pointer-events: none; transition: opacity .15s, translate .15s;
+  }
+  .tool-btn:hover::after, .tool-btn:focus-visible::after { opacity: 1; translate: -50% 0; }
+  .go {
+    display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 20px 0 24px; border: 0; border-radius: 999px; cursor: pointer;
+    background: var(--ink); color: var(--yellow); font: 700 15px/1 "Poppins", sans-serif; white-space: nowrap;
+    box-shadow: 0 12px 26px rgba(21, 16, 51, .35), inset 0 1px 0 rgba(255, 255, 255, .18); transition: transform .2s, box-shadow .2s;
+  }
+  .go:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(21, 16, 51, .4), inset 0 1px 0 rgba(255, 255, 255, .18); }
+  .go:active { transform: scale(.97); }
+  .lab:not(.touched) .go { animation: nudge 2.4s ease-in-out infinite; }
+  @keyframes nudge { 0%, 100% { box-shadow: 0 12px 26px rgba(21, 16, 51, .35), 0 0 0 0 rgba(255, 73, 180, .5); } 50% { box-shadow: 0 12px 26px rgba(21, 16, 51, .35), 0 0 0 10px rgba(255, 73, 180, 0); } }
+  .tool-btn:focus-visible, .go:focus-visible { outline: 2px solid var(--pink); outline-offset: 3px; }
+
+  .lab-fallback { display: none; }
+  .lab.no-webgl .lab-fallback { display: block; }
+  .lab.no-webgl .lab-stage, .lab.no-webgl .lab-hint { display: none; }
+  .lab-hint { margin: 20px auto 0; max-width: 46ch; min-height: 3em; text-align: center; font-size: 16px; color: var(--soft); }
+  .lab-hint b { color: #fff; }
+
+  /* ---------- sections ---------- */
+  section { position: relative; padding: 110px 0 0; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+
+  /* admit-one tickets */
+  .tickets { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px 26px; margin-top: 46px; }
+  .ticket {
+    position: relative; display: grid; grid-template-columns: 54px 1fr; color: var(--ink); background: var(--ticket);
+    border-radius: 10px; min-height: 150px; transform: rotate(var(--r, 0deg)); transition: transform .2s;
+    -webkit-mask: radial-gradient(circle 11px at 54px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 11px at 54px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+            mask: radial-gradient(circle 11px at 54px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 11px at 54px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  }
+  .ticket:hover { transform: rotate(0deg) translateY(-4px); }
+  .ticket .stub {
+    border-right: 2px dashed rgba(21, 16, 51, .35); display: grid; place-items: center;
+    writing-mode: vertical-rl; transform: rotate(180deg); font-weight: 800; font-size: 13px; letter-spacing: .18em; color: #c0328c;
+  }
+  .ticket .in { padding: 18px 20px; }
+  .ticket h3 { font-family: "Shrikhand", serif; font-weight: 400; font-size: 24px; color: var(--sky-deep); margin-bottom: 4px; }
+  .ticket p { font-size: 15.5px; line-height: 1.45; }
+  .ticket:nth-child(3n+2) { --r: 1.2deg; } .ticket:nth-child(3n+1) { --r: -1deg; } .ticket:nth-child(3n) { --r: .6deg; }
+
+  .scrawl { margin-top: 40px; display: flex; gap: 18px; align-items: flex-start; max-width: 760px; }
+  .scrawl svg { flex: none; width: 54px; margin-top: 4px; }
+  .scrawl p { font-style: italic; font-size: 18px; color: var(--soft); }
+  .scrawl b { color: #fff; font-style: normal; }
+
+  /* neon idea signs */
+  .neons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 30px; }
+  .neon {
+    border-radius: 18px; padding: 22px 18px; text-align: center; border: 2px solid currentColor; color: var(--c);
+    box-shadow: 0 0 12px var(--c), inset 0 0 12px var(--c); text-shadow: 0 0 8px var(--c);
+    font-weight: 800; font-size: 19px; line-height: 1.2; letter-spacing: -.01em;
+    animation: flick 6s infinite; animation-delay: var(--d, 0s);
+  }
+  .neon small { display: block; margin-top: 6px; font-weight: 400; font-style: italic; font-size: 14px; color: rgba(255, 255, 255, .8); text-shadow: none; }
+  @keyframes flick { 0%, 92%, 100% { opacity: 1; } 93% { opacity: .35; } 94% { opacity: 1; } 96% { opacity: .5; } }
+
+  /* last year: polaroids on a wire */
+  .wire { position: relative; margin-top: 30px; }
+  .wire .lights { height: 70px; }
+  .pins { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; margin-top: -36px; padding: 0 2%; }
+  .polaroid { position: relative; background: #fbfaf6; padding: 10px 10px 40px; border-radius: 3px; box-shadow: 0 14px 24px rgba(5, 10, 40, .45); transform: rotate(var(--r)); transform-origin: 50% -20px; transition: transform .3s; color: var(--ink); }
+  .polaroid:hover { transform: rotate(calc(var(--r) * -.4)); }
+  .polaroid::before { content: ""; position: absolute; top: -16px; left: 50%; width: 12px; height: 30px; translate: -50% 0; border-radius: 3px; background: linear-gradient(#d9a54a, #b07a2a); box-shadow: 0 2px 3px rgba(0, 0, 0, .35); }
+  .polaroid img { width: 100%; aspect-ratio: 1; object-fit: cover; }
+  .polaroid figcaption { position: absolute; left: 0; right: 0; bottom: 9px; text-align: center; font-style: italic; font-size: 14px; }
+
+  .receipt { background: #fbfaf6; color: var(--ink); padding: 26px 26px 34px; border-radius: 6px 6px 0 0; font-size: 15.5px; position: relative; transform: rotate(-1deg);
+    -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 12px) no-repeat, conic-gradient(from 135deg at 50% 0, #000 90deg, #0000 0) bottom / 18px 12px repeat-x;
+            mask: linear-gradient(#000 0 0) top / 100% calc(100% - 12px) no-repeat, conic-gradient(from 135deg at 50% 0, #000 90deg, #0000 0) bottom / 18px 12px repeat-x; }
+  .receipt h3 { font-family: "Shrikhand", serif; font-weight: 400; color: var(--sky-deep); font-size: 26px; margin-bottom: 12px; }
+  .receipt dl { display: grid; grid-template-columns: auto 1fr; gap: 9px 18px; }
+  .receipt dt { font-weight: 800; white-space: nowrap; }
+  .receipt dd { border-bottom: 1px dashed rgba(21, 16, 51, .25); padding-bottom: 8px; }
+
+  /* parts stall + budget meter */
+  .stall { display: grid; grid-template-columns: 1.25fr .75fr; gap: 30px; margin-top: 40px; align-items: start; }
+  .board-menu { position: relative; background: #121a40; border-radius: 22px; padding: 30px 30px 26px; box-shadow: inset 0 0 0 3px #0b1130, 0 18px 40px rgba(5, 10, 40, .4); }
+  .board-menu .lights { position: absolute; top: -34px; left: 0; height: 60px; }
+  .menu-row { display: grid; grid-template-columns: 1fr auto 40px; gap: 10px; align-items: baseline; padding: 9px 0; }
+  .menu-row + .menu-row { border-top: 1px solid rgba(255, 255, 255, .07); }
+  .menu-row .name { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+  .menu-row .name b { font-weight: 600; white-space: nowrap; }
+  .menu-row .name i { flex: 1; border-bottom: 2px dotted rgba(255, 255, 255, .25); min-width: 20px; translate: 0 -5px; }
+  .menu-row .use { display: block; font-size: 13px; color: rgba(255, 255, 255, .55); font-style: italic; }
+  .menu-row .price { color: var(--yellow); font-weight: 800; white-space: nowrap; }
+  .menu-row button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid var(--pink); background: transparent; color: var(--pink); font: 800 18px/1 "Poppins"; cursor: pointer; align-self: center; }
+  .menu-row button:hover, .menu-row button:focus-visible { background: var(--pink); color: #fff; outline: none; }
+  .menu-row.pcb input { width: 72px; padding: 6px 8px; border-radius: 10px; border: 2px solid rgba(255, 255, 255, .4); background: transparent; color: var(--yellow); font: 800 15px "Poppins"; text-align: right; }
+
+  .meter { position: sticky; top: 24px; background: var(--ticket); color: var(--ink); border-radius: 22px; padding: 24px; box-shadow: 0 6px 0 #c79c2a; }
+  .meter h3 { font-family: "Shrikhand", serif; font-weight: 400; font-size: 24px; color: var(--sky-deep); }
+  .meter .total { font-weight: 800; font-size: 54px; letter-spacing: -.05em; line-height: 1.05; margin: 6px 0 2px; }
+  .meter .total small { font-size: 22px; color: rgba(21, 16, 51, .5); letter-spacing: -.02em; }
+  .meter .bar { height: 16px; border-radius: 99px; background: rgba(21, 16, 51, .12); overflow: hidden; margin: 10px 0 12px; }
+  .meter .bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #35b26b, var(--gold)); border-radius: inherit; transition: width .35s cubic-bezier(.2, .8, .2, 1); }
+  .meter.over .bar i { background: #e2264d; }
+  .meter.over { animation: shake .35s; }
+  @keyframes shake { 25% { translate: -5px 0; } 75% { translate: 5px 0; } }
+  .meter .status { font-weight: 600; font-size: 15px; }
+  .meter ul { list-style: none; margin: 12px 0; font-size: 14px; max-height: 160px; overflow: auto; }
+  .meter li { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px dashed rgba(21, 16, 51, .2); }
+  .meter li button { border: 0; background: none; color: #c0328c; font-weight: 800; cursor: pointer; }
+  .meter .fine { font-size: 12.5px; color: rgba(21, 16, 51, .65); margin-top: 8px; }
+  .meter .clear { border: 0; background: none; text-decoration: underline; cursor: pointer; font: 600 14px "Poppins"; color: var(--ink); }
+
+  /* how-to: steps hanging off a wire */
+  .tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 34px; }
+  .tool { position: relative; padding: 24px; border-radius: 22px; background: rgba(255, 255, 255, .07); border: 2px solid rgba(255, 255, 255, .18); }
+  .tool.pick { border-color: var(--yellow); background: rgba(248, 226, 124, .1); }
+  .tool .tag { position: absolute; top: -14px; right: 18px; background: var(--pink); color: #fff; font-weight: 800; font-size: 13px; padding: 4px 12px; border-radius: 99px; transform: rotate(3deg); }
+  .tool h3 { font-family: "Shrikhand", serif; font-weight: 400; font-size: 28px; color: var(--yellow); }
+  .tool .meta { font-style: italic; color: #fff; font-size: 15px; margin: 2px 0 8px; }
+  .tool p { font-size: 15.5px; color: var(--soft); }
+
+  .bulb-steps { position: relative; list-style: none; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-top: 56px; counter-reset: s; }
+  .bulb-steps::before { content: ""; position: absolute; left: 0; right: 0; top: 14px; height: 2px; background: #0f1736; }
+  .bulb-steps li { position: relative; counter-increment: s; padding-top: 58px; font-size: 15.5px; color: var(--soft); }
+  .bulb-steps li::before {
+    content: counter(s); position: absolute; top: 6px; left: 0; width: 34px; height: 42px; border-radius: 50% 50% 46% 46%;
+    display: grid; place-items: center; font-weight: 800; color: var(--ink); background: #3a4672; border: 2px solid #0f1736; transition: background .4s, box-shadow .4s;
+  }
+  .bulb-steps li.on::before { background: var(--gold); box-shadow: 0 0 10px var(--gold), 0 0 26px rgba(255, 170, 60, .7); }
+  .bulb-steps b { color: #fff; }
+
+  /* ask anything cloud */
+  .ask { position: relative; max-width: 860px; margin: 0 auto; text-align: center; padding: 70px 70px 64px; }
+  .ask > svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: rgba(21, 16, 51, .35); stroke: #fff; stroke-width: 3; }
+  .ask > * { position: relative; }
+  .ask h2 { margin-bottom: 12px; }
+  .ask p { color: var(--soft); max-width: 52ch; margin: 0 auto; }
+  .ask .tba { display: inline-block; margin-top: 18px; font-style: italic; font-weight: 300; font-size: 22px; }
+  .ask .tba em { font-style: normal; font-weight: 800; color: var(--pink); }
+
+  /* judging wheel */
+  .judge { display: grid; grid-template-columns: .8fr 1.2fr; gap: 50px; align-items: center; margin-top: 30px; }
+  .wheel-wrap { position: relative; width: min(100%, 420px); margin: 0 auto; }
+  .wheel {
+    aspect-ratio: 1; border-radius: 50%; border: 10px solid var(--ink); position: relative;
+    background: conic-gradient(var(--pink) 0 25%, var(--yellow) 0 50%, #59c3ff 0 70%, #8be08b 0 85%, #c69bff 0 100%);
+    box-shadow: 0 0 0 4px var(--gold), 0 0 34px rgba(255, 207, 90, .45);
+    transition: transform 3.2s cubic-bezier(.12, .7, .1, 1);
+  }
+  .wheel::after { content: ""; position: absolute; inset: 41%; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 4px var(--gold); }
+  .wheel span { position: absolute; left: calc(50% + 30% * cos(var(--a))); top: calc(50% + 30% * sin(var(--a))); translate: -50% -50%; font-weight: 800; font-size: 14px; color: var(--ink); }
+  .wheel-wrap::before { content: ""; position: absolute; top: -18px; left: 50%; translate: -50% 0; z-index: 2; border: 16px solid transparent; border-top: 26px solid var(--white); border-bottom: 0; filter: drop-shadow(0 2px 0 var(--ink)); }
+  .wheel-wrap button { position: absolute; inset: 42%; z-index: 2; border-radius: 50%; border: 0; background: transparent; color: var(--yellow); font: 800 14px "Poppins"; cursor: pointer; }
+  .crit { list-style: none; display: grid; gap: 16px; }
+  .crit li { display: grid; grid-template-columns: 104px 1fr; gap: 16px; align-items: baseline; }
+  .crit .pct { font-family: "Shrikhand", serif; font-size: 34px; line-height: 1; color: var(--c); }
+  .crit h3 { color: #fff; }
+  .crit p { color: var(--soft); font-size: 15.5px; }
+  .must { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+  .must span { display: inline-flex; gap: 8px; align-items: center; border: 2px solid var(--yellow); color: var(--yellow); border-radius: 99px; padding: 6px 14px; font-weight: 600; font-size: 14px; transform: rotate(var(--r, -1deg)); }
+  .must span:nth-child(even) { --r: 1.2deg; }
+
+  /* faq */
+  .faq { margin-top: 26px; border-top: 2px solid rgba(255, 255, 255, .2); }
+  .faq details { border-bottom: 2px solid rgba(255, 255, 255, .2); }
+  .faq summary { list-style: none; cursor: pointer; padding: 22px 54px 22px 0; position: relative; font-weight: 600; font-size: clamp(18px, 2vw, 22px); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: ""; position: absolute; right: 8px; top: 50%; width: 22px; height: 26px; translate: 0 -50%; border-radius: 50% 50% 45% 45%; background: #3a4672; border: 2px solid #0f1736; transition: background .3s, box-shadow .3s; }
+  .faq details[open] summary::after { background: var(--gold); box-shadow: 0 0 10px var(--gold), 0 0 22px rgba(255, 170, 60, .7); }
+  .faq summary:hover { color: var(--yellow); }
+  .faq details p { padding: 0 54px 24px 0; color: var(--soft); max-width: 70ch; }
+
+  /* submit: admit one */
+  .admit {
+    position: relative; display: grid; grid-template-columns: 120px 1fr; margin-top: 30px; background: var(--ticket); color: var(--ink); border-radius: 18px;
+    -webkit-mask: radial-gradient(circle 20px at 120px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 20px at 120px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+            mask: radial-gradient(circle 20px at 120px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 20px at 120px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+  }
+  .admit .stub { border-right: 3px dashed rgba(21, 16, 51, .3); display: grid; place-items: center; writing-mode: vertical-rl; transform: rotate(180deg); font-family: "Shrikhand", serif; font-size: 34px; color: #c0328c; }
+  .admit .in { padding: clamp(26px, 4vw, 48px); display: grid; grid-template-columns: 1.2fr .8fr; gap: 30px; align-items: center; }
+  .admit h2 { font-family: "Shrikhand", serif; font-weight: 400; color: var(--sky-deep); font-size: clamp(36px, 5vw, 64px); line-height: 1; }
+  .admit ul { list-style: none; margin-top: 16px; display: grid; gap: 6px; }
+  .admit li::before { content: "✦"; color: #c0328c; margin-right: 10px; }
+  .admit .side { text-align: center; }
+  .admit .closes { font-style: italic; font-size: 18px; }
+  .admit .closes b { display: block; font-style: italic; font-size: 64px; letter-spacing: -.07em; line-height: 1; color: var(--ink); }
+  .admit .btn { margin-top: 18px; }
+  .admit .btn[aria-disabled="true"] { cursor: not-allowed; opacity: .92; }
+  .admit .wins { margin-top: 12px; font-size: 14px; }
+
+  /* footer garden from the landing page */
+  footer { position: relative; margin-top: 120px; padding-bottom: 170px; }
+  footer::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 170px; background: url("../assets/ground.webp") left bottom / auto 100% repeat-x; pointer-events: none; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--soft); }
+  footer img { width: 170px; }
+
+  .float-submit { position: fixed; right: 18px; bottom: 18px; z-index: 40; opacity: 0; translate: 0 20px; pointer-events: none; transition: opacity .3s, translate .3s; }
+  .float-submit.show { opacity: 1; translate: 0 0; pointer-events: auto; }
+
+  @media (max-width: 980px) {
+    .hero-grid, .two, .stall, .judge { grid-template-columns: 1fr; }
+    .tickets, .tools { grid-template-columns: 1fr 1fr; }
+    .neons, .pins { grid-template-columns: 1fr 1fr; }
+    .bulb-steps { grid-template-columns: repeat(3, 1fr); row-gap: 30px; }
+    .bulb-steps::before { display: none; }
+    .admit .in { grid-template-columns: 1fr; }
+    .meter { position: relative; top: 0; }
+    .pins { margin-top: 0; row-gap: 40px; }
+    .wire .lights { display: none; }
+  }
+  @media (max-width: 620px) {
+    body { font-size: 16px; --cell: 34px; }
+    .top nav a:not(.btn) { display: none; }
+    .hero-grid { margin-top: 120px; }
+    .hero > .lights { top: 70px; }
+    .hero > .cloud { display: none; }
+    .lab-stage { height: 440px; }
+    .tickets, .tools, .neons { grid-template-columns: 1fr; }
+    .bulb-steps { grid-template-columns: 1fr 1fr; }
+    .lab-steps li { font-size: 10.5px; }
+    .tool-btn { width: 40px; height: 40px; }
+    .go { height: 48px; padding: 0 16px 0 18px; font-size: 14px; }
+    .lab-bar { bottom: 14px; gap: 8px; }
+    .lab-top { top: 14px; }
+    .lab-steps { gap: 7px; }
+    .lab-steps li { width: 54px; height: 54px; border-radius: 14px; font-size: 9px; }
+    .lab-steps svg { width: 19px; height: 19px; }
+    .lab-spin { display: none; }
+    .ask { padding: 56px 34px 50px; }
+    .admit { grid-template-columns: 56px 1fr; -webkit-mask-position: top, bottom; }
+    .admit { -webkit-mask: radial-gradient(circle 14px at 56px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 14px at 56px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
+                     mask: radial-gradient(circle 14px at 56px 0, #0000 98%, #000) top / 100% 51% no-repeat, radial-gradient(circle 14px at 56px 100%, #0000 98%, #000) bottom / 100% 51% no-repeat; }
+    .admit .stub { font-size: 22px; }
+    .menu-row { grid-template-columns: 1fr auto 36px; }
+    .menu-row .name b { white-space: normal; }
+    .menu-row .name i { display: none; }
+    .board-menu { padding: 26px 18px 20px; }
+    footer { padding-bottom: 120px; } footer::after { height: 120px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .gridbg i { animation: none; opacity: .18; }
+    .cloud, .lights circle, .neon, .lab-steps li, .go { animation: none !important; }
+    .wheel { transition: none; }
+  }
+</style>
+<script type="importmap">
+  { "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  } }
+</script>
+</head>
+<body>
+  <div class="gridbg" aria-hidden="true"></div>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="cloud" viewBox="0 0 120 60"><path d="M8 52h104a14 14 0 0 0-10-24 12 12 0 0 0-18-8 22 22 0 0 0-40 2 14 14 0 0 0-20 12A10 10 0 0 0 8 52z"/></symbol>
+  </svg>
+
+  <header class="hero">
+    <svg class="lights" data-sag="60" data-bulbs="22" viewBox="0 0 1200 90" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <svg class="cloud" style="left:3%;top:200px;width:120px" aria-hidden="true"><use href="#cloud"/></svg>
+    <svg class="cloud" style="right:4%;top:150px;width:100px;animation-delay:-3s" aria-hidden="true"><use href="#cloud"/></svg>
+
+    <div class="wrap">
+      <div class="top">
+        <a href="../" aria-label="Space Carnival home"><img class="logo" src="../assets/logo-navy.png" alt="TinkerSpace Kochi" width="1337" height="190"></a>
+        <nav aria-label="Page">
+          <a href="#brief">The brief</a>
+          <a href="#faq">FAQ</a>
+          <a href="../">Carnival</a>
+          <a class="btn btn-pink" href="#submit" style="padding:10px 18px;font-size:14px">Submit</a>
+        </nav>
+      </div>
+
+      <div class="hero-grid">
+        <div>
+          <p class="whisper">the space carnival</p>
+          <h1 class="groovy">Badge<br>Design<br>Competition</h1>
+          <p class="whisper">every attendee solders one,<br>yours could be <em>the one they wear.</em></p>
+          <div class="date" aria-label="Submissions close November 21">
+            <span class="mon">NOV</span><span class="day">21</span><small>submissions<br>close</small>
+          </div>
+          <div class="btns">
+            <a class="btn btn-yellow" href="#brief">Read the brief</a>
+            <a class="btn btn-ghost" href="#submit">How to submit</a>
+          </div>
+        </div>
+
+        <div class="lab" id="lab">
+          <div class="lab-stage" aria-label="Interactive 3D model of the 2025 Space Carnival badge">
+            <div class="lab-top">
+              <span class="sr" data-steplabel aria-live="polite">Step 1 of 5</span>
+              <ol class="lab-steps" aria-label="Build steps">
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12a4 4 0 0 1 8 0v4H8zM6.5 16h11M10.5 16v5M13.5 16v3.5"/></svg><span>LEDs</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 7.5A8 8 0 1 0 20 12h-4.5M12 9a3 3 0 1 0 0 6"/></svg><span>Holder</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5 9 15M8 14l2 2 9-9-2-2zM15 5l4 4"/></svg><span>Solder</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 9v6M9 12h6"/></svg><span>Coin cell</span></li>
+                <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></svg><span>Light up</span></li>
+              </ol>
+            </div>
+            <span class="lab-spin">drag to spin</span>
+            <div class="lab-bar">
+              <div class="tools-pill">
+                <button class="tool-btn" data-act="flip" aria-label="Flip the board" data-tip="Flip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6M20 12a8 8 0 0 1-13.7 5.6M18 2.5v4.2h-4.2M6 21.5v-4.2h4.2"/></svg></button>
+                <button class="tool-btn" data-act="auto" aria-label="Build it for me" data-tip="Build it for me"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 14 10M15 3.5l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1zM19.5 11.5l.6 1.3 1.3.6-1.3.6-.6 1.3-.6-1.3-1.3-.6 1.3-.6z"/></svg></button>
+                <button class="tool-btn" data-act="reset" aria-label="Start over" data-tip="Start over"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 4v5h5M4.2 9A8 8 0 1 1 5 16.5"/></svg></button>
+              </div>
+              <button class="go" data-act="do"><span data-cap>Start building</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+            </div>
+          </div>
+          <p class="lab-hint" aria-live="polite">Loading the badge…</p>
+          <figure class="lab-fallback"><img src="../assets/badge/photo-front.webp" alt="The 2025 Space Carnival badge" width="800" height="769"></figure>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="brief">
+      <div class="wrap">
+        <p class="say">Under <em>₹50</em>. Inside <em>40 × 40 mm</em>.<br>Soldered by a first-timer in <em>15 minutes</em>.</p>
+        <div class="two" style="margin-top:40px">
+          <div>
+            <p class="body-copy">Design the official PCB badge for the next TinkerSpace Carnival: the circuit, the board shape and the artwork. The winning design gets fabricated and handed to every attendee as a keepsake they solder themselves.</p>
+            <p class="body-copy">It must cost under ₹50 to build, PCB and battery included, and it should say something about our local maker culture.</p>
+          </div>
+          <div>
+            <p class="body-copy"><b style="color:#fff">Who can join:</b> anyone. Students, makers, first-timers. No PCB experience needed.</p>
+            <p class="body-copy"><b style="color:#fff">What you send:</b> a schematic, the PCB layout (Gerbers), a BOM with prices, and a render or photo of the badge.</p>
+          </div>
+        </div>
+
+        <div class="tickets">
+          <article class="ticket"><div class="stub">RULE 01</div><div class="in"><h3>Budget</h3><p>Total BOM under ₹50 per badge, including the PCB and battery.</p></div></article>
+          <article class="ticket"><div class="stub">RULE 02</div><div class="in"><h3>Board size</h3><p>Must fit within 40 × 40 mm. Any shape inside that.</p></div></article>
+          <article class="ticket"><div class="stub">RULE 03</div><div class="in"><h3>Power</h3><p>A 3 V coin cell, or USB.</p></div></article>
+          <article class="ticket"><div class="stub">RULE 04</div><div class="in"><h3>Assembly</h3><p>Must give attendees a real soldering experience. Through-hole parts recommended.</p></div></article>
+          <article class="ticket"><div class="stub">RULE 05</div><div class="in"><h3>Theme</h3><p>Represents local maker culture: Kerala, Kochi, our communities, language and stories.</p></div></article>
+          <article class="ticket"><div class="stub">RULE 06</div><div class="in"><h3>Manufacturer</h3><p>Designed for Lion Circuits. Check their capabilities before you finalise.</p></div></article>
+        </div>
+
+        <div class="scrawl">
+          <svg viewBox="0 0 54 40" aria-hidden="true"><path d="M2 30c12-2 26-10 34-22m0 0-10 2m10-2 1 10" fill="none" stroke="#ff49b4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <p><b>Show your costing in the BOM:</b> one row per part, with quantity, unit price at 300 units and a source link. Count the PCB at its quoted price for your board size.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <h2 class="groovy">Why a badge?</h2>
+        <p class="whisper" style="max-width:30ch">for many attendees, it's the <em>first time holding a soldering iron.</em></p>
+        <div class="two" style="margin-top:34px">
+          <p class="body-copy">We want them to walk away having built something that works and that they are proud to wear. Every attendee assembles their own badge at the Carnival, so it has to be solderable by a beginner in about 15–20 minutes.</p>
+          <p class="body-copy">The badge is a small piece of art that says where it came from. Opening the design up lets more people learn PCB design, and the winner sees their board made in the hundreds. At hundreds of units every rupee matters, hence ₹50.</p>
+        </div>
+
+        <h3 class="whisper" style="margin-top:70px">make it <em>useful,</em> not just pretty.</h3>
+        <p class="body-copy" style="margin-top:8px">A badge doesn't have to only blink. A USB-powered badge saves the battery cost and can be something people keep using after the Carnival. Microcontrollers with built-in USB (like the CH552) keep the cost low.</p>
+        <div class="neons">
+          <div class="neon" style="--c:#ff6ec7">Macro key<small>or a volume knob for your laptop</small></div>
+          <div class="neon" style="--c:#7fe3ff;--d:-2s">Tiny FM radio<small>a receiver on a badge</small></div>
+          <div class="neon" style="--c:#ffe066;--d:-4s">Mesh badges<small>light up when attendees meet</small></div>
+          <div class="neon" style="--c:#8dff9a;--d:-1s">Status light<small>notifications for your computer</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="last-year">
+      <div class="wrap">
+        <h2 class="groovy">The 2025 badge</h2>
+        <p class="whisper" style="max-width:34ch">300 badges for three years of TinkerSpace, <em>kitted by the community.</em></p>
+        <div class="wire">
+          <svg class="lights" data-sag="34" data-bulbs="14" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"></svg>
+          <div class="pins">
+            <figure class="polaroid" style="--r:-3deg"><img src="../assets/badge/photo-front.webp" alt="Front of the 2025 badge with the TinkerSpace building drawing" width="800" height="769" loading="lazy"><figcaption>the front</figcaption></figure>
+            <figure class="polaroid" style="--r:2.5deg"><img src="../assets/badge/photo-back.webp" alt="Back of the 2025 badge with a CR2032 coin cell" width="800" height="759" loading="lazy"><figcaption>be kind. be curious.</figcaption></figure>
+            <figure class="polaroid" style="--r:-1.5deg"><img src="../assets/badge/photo-soldering.webp" alt="Attendees soldering badges at TinkerSpace" width="800" height="451" loading="lazy"><figcaption>soldering night</figcaption></figure>
+            <figure class="polaroid" style="--r:3deg"><img src="../assets/badge/photo-kits.webp" alt="A box full of packed badge kits" width="655" height="800" loading="lazy"><figcaption>300 kits</figcaption></figure>
+          </div>
+        </div>
+        <div class="two" style="margin-top:70px;align-items:center">
+          <div>
+            <p class="body-copy">It was deliberately minimal: drop in a coin cell and it lights up. This year we want to go further, with more soldering, more ideas, and a design that comes from the community.</p>
+            <p class="body-copy">The whole design is open source. Open the EasyEDA files to see how a real badge is put together.</p>
+            <p style="margin-top:22px"><a class="btn btn-yellow" href="https://github.com/salmanfarisvp/space-carnival-badge-2025" target="_blank" rel="noopener">Open the 2025 files on GitHub</a></p>
+          </div>
+          <div class="receipt">
+            <h3>Spec sheet</h3>
+            <dl>
+              <dt>Board</dt><dd>40 × 40 mm, 2 layers, 1.6 mm FR-4</dd>
+              <dt>Power</dt><dd>1 × CR2032 coin cell (3 V)</dd>
+              <dt>Parts</dt><dd>2 × 5 mm self-cycling RGB LEDs + a coin-cell holder</dd>
+              <dt>Artwork</dt><dd>Space Carnival logotype on the front; "be kind. be curious." and a write-your-name strip on the back</dd>
+              <dt>EDA tool</dt><dd>EasyEDA Standard</dd>
+              <dt>Made by</dt><dd>Lion Circuits</dd>
+              <dt>Designer</dt><dd>Salman Faris</dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="parts">
+      <div class="wrap">
+        <h2 class="groovy">The parts stall</h2>
+        <p class="whisper" style="max-width:36ch">any component is allowed. <em>₹50 is the whole wallet.</em></p>
+        <p class="body-copy" style="margin-top:12px">Rough bulk prices to help you plan. Tap <b style="color:#fff">+</b> to drop parts on your badge and watch the budget. Prices change with quantity and supplier, so quote real ones in your BOM.</p>
+        <div class="stall">
+          <div class="board-menu">
+            <svg class="lights" data-sag="22" data-bulbs="12" viewBox="0 0 1200 60" preserveAspectRatio="none" aria-hidden="true"></svg>
+            <div id="menu"></div>
+          </div>
+          <aside class="meter" id="meter" aria-live="polite">
+            <h3>Your badge</h3>
+            <div class="total">₹<span id="total">0</span> <small>/ ₹50</small></div>
+            <div class="bar"><i id="fill"></i></div>
+            <p class="status" id="status">Empty board. Add some parts.</p>
+            <ul id="basket"></ul>
+            <button class="clear" id="clear" type="button">Clear</button>
+            <p class="fine">Uses the middle of each price range. A CR2032 alone can take a quarter of the budget, so USB power frees up money for other parts.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="wrap">
+        <h2 class="groovy">Never made a PCB?</h2>
+        <p class="whisper" style="max-width:34ch">start with <em>EasyEDA.</em> it's free, runs in the browser, and last year's badge was made with it.</p>
+        <div class="tools">
+          <div class="tool pick"><span class="tag">Start here</span><h3>EasyEDA</h3><p class="meta">free · beginner-friendly</p><p>Runs in the browser, has a big parts library linked to LCSC, and exports Gerbers in one click.</p></div>
+          <div class="tool"><h3>KiCad</h3><p class="meta">free, open source · intermediate to pro</p><p>Full-featured desktop tool used by professionals. Steeper learning curve; no account or cloud needed.</p></div>
+          <div class="tool"><h3>Fusion</h3><p class="meta">free for personal use · intermediate</p><p>Autodesk's tool combines PCB and 3D/mechanical design. Useful for unusual board shapes.</p></div>
+        </div>
+        <ol class="bulb-steps">
+          <li><b>Draw the schematic.</b> Place parts and wire them up.</li>
+          <li><b>Make it a PCB</b> and draw the board outline: your badge shape.</li>
+          <li><b>Place and route.</b> Arrange parts, draw the traces.</li>
+          <li><b>Add the artwork</b> on silkscreen. This is where your theme lives.</li>
+          <li><b>Run DRC</b> and fix the errors.</li>
+          <li><b>Export</b> Gerbers, BOM and a 3D render.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="call">
+      <div class="wrap">
+        <div class="ask">
+          <svg viewBox="0 0 860 380" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M90 340C30 340 10 290 40 255 0 220 20 160 80 160 70 100 130 60 190 85 220 25 320 20 360 70 400 15 500 20 530 75 580 30 680 45 690 110 760 95 820 150 800 200 850 230 840 300 780 320 770 345 740 350 700 340Z"/></svg>
+          <h2 class="groovy">Ask Anything call</h2>
+          <p>An open online call for questions about the competition, PCB design or your idea. A few of us from the team will be there. Bring half-done designs: we'll look at them together.</p>
+          <p class="tba">date &amp; link <em>coming soon</em></p>
+        </div>
+      </div>
+    </section>
+
+    <section id="judging">
+      <div class="wrap">
+        <h2 class="groovy">How we judge</h2>
+        <p class="whisper" style="max-width:36ch">pass the hard rules first, <em>then spin for points.</em></p>
+        <div class="must" aria-label="Must pass, not scored">
+          <span>✓ BOM under ₹50 with sourced prices</span><span>✓ fits in 40 × 40 mm</span><span>✓ Lion Circuits can make it</span><span>✓ in by 21 November</span>
+        </div>
+        <div class="judge">
+          <div class="wheel-wrap">
+            <div class="wheel" id="wheel">
+              <span style="--a:-45deg">Creativity</span><span style="--a:45deg">Usability</span><span style="--a:126deg">Design</span><span style="--a:189deg">Theme</span><span style="--a:243deg">Soldering</span>
+            </div>
+            <button type="button" id="spin" aria-label="Spin the wheel">SPIN</button>
+          </div>
+          <ol class="crit">
+            <li style="--c:var(--pink)"><span class="pct">25%</span><div><h3>Creativity</h3><p>An original idea, something we haven't seen on a badge before.</p></div></li>
+            <li style="--c:var(--yellow)"><span class="pct">25%</span><div><h3>Usability</h3><p>Useful or fun beyond the event: does it do something people keep using?</p></div></li>
+            <li style="--c:#59c3ff"><span class="pct">20%</span><div><h3>Design</h3><p>Board shape, artwork and a clean, tidy layout.</p></div></li>
+            <li style="--c:#8be08b"><span class="pct">15%</span><div><h3>Theme</h3><p>How well it represents local maker culture.</p></div></li>
+            <li style="--c:#c69bff"><span class="pct">15%</span><div><h3>Soldering experience</h3><p>Doable and satisfying for a first-timer in about 15–20 minutes.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="wrap">
+        <h2 class="groovy">Questions?</h2>
+        <div class="faq">
+          <details><summary>Can I use a microcontroller?</summary><p>Yes, as long as the total badge stays under ₹50. If it needs programming, tell us how it gets flashed for hundreds of units.</p></details>
+          <details><summary>Can I make a purely analog badge?</summary><p>Yes. LEDs, 555 timers and transistor circuits are all welcome.</p></details>
+          <details><summary>Battery or USB?</summary><p>Either. A 3 V coin cell, a 90 mAh Li-Po or USB power are all fine; just include the cost in your BOM. A USB badge skips the battery cost and can do something useful when plugged into a computer.</p></details>
+          <details><summary>Does the ₹50 include the PCB?</summary><p>Yes. ₹50 is the total for everything on the badge, including the PCB and the battery.</p></details>
+          <details><summary>Can I use SMD parts?</summary><p>Yes, but attendees must still get to solder something. Through-hole parts are easier for beginners.</p></details>
+          <details><summary>I've never designed a PCB. Can I still join?</summary><p>Yes. Start with EasyEDA (see <a href="#how">Never made a PCB?</a>) and come to the <a href="#call">Ask Anything call</a>.</p></details>
+          <details><summary>Can I work in a team?</summary><p>Team size is still being decided. We'll update this page soon.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section id="submit">
+      <div class="wrap">
+        <div class="admit">
+          <div class="stub">ADMIT ONE</div>
+          <div class="in">
+            <div>
+              <h2>Your design</h2>
+              <ul>
+                <li>Schematic</li>
+                <li>PCB layout (Gerbers)</li>
+                <li>BOM with quantities, unit prices at 300 units and source links</li>
+                <li>A render or photo of the badge</li>
+              </ul>
+            </div>
+            <div class="side">
+              <p class="closes">submissions close<b>Nov 21</b></p>
+              <a class="btn btn-pink" href="https://chodhyam.tinkerhub.org/nc/form/04c9ef4e-565c-415a-890a-8216d564abe2" target="_blank" rel="noopener">Submit your design ↗</a>
+              <p class="wins">The winning design is made for every attendee, with your name on it.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <a href="../"><img src="../assets/logo.png" alt="TinkerSpace Kochi" width="1337" height="190"></a>
+      <span>Badge photos and Gerbers: <a href="https://github.com/salmanfarisvp/space-carnival-badge-2025" target="_blank" rel="noopener">space-carnival-badge-2025</a> (MIT)</span>
+      <a href="../">← back to the Carnival</a>
+    </div>
+  </footer>
+
+  <a class="btn btn-pink float-submit" href="#submit">Submit your design</a>
+
+<script type="module" src="badge3d.js"></script>
+<script>
+  // light up a few random grid cells, mostly near the top of the page
+  (() => {
+    const g = document.querySelector('.gridbg');
+    const cell = parseFloat(getComputedStyle(document.body).getPropertyValue('--cell'));
+    const cols = Math.floor(innerWidth / cell), colours = ['#ff49b4', '#f8e27c', '#59c3ff', '#8be08b'];
+    for (let n = 0; n < 22; n++) {
+      const i = document.createElement('i');
+      const row = Math.floor(Math.pow(Math.random(), 1.8) * document.body.scrollHeight / cell);
+      i.style.left = Math.floor(Math.random() * cols) * cell + 1 + 'px';
+      i.style.top = row * cell + 1 + 'px';
+      i.style.setProperty('--c', colours[n % 4]);
+      i.style.setProperty('--d', (-Math.random() * 9).toFixed(2) + 's');
+      g.appendChild(i);
+    }
+  })();
+
+  // string lights: hang bulbs along a sagging wire
+  document.querySelectorAll('svg.lights').forEach(svg => {
+    const [, , w, h] = svg.getAttribute('viewBox').split(' ').map(Number);
+    const sag = +svg.dataset.sag, n = +svg.dataset.bulbs, ns = 'http://www.w3.org/2000/svg';
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', `M0 6 Q${w / 2} ${6 + sag * 2} ${w} 6`);
+    path.setAttribute('vector-effect', 'non-scaling-stroke');
+    svg.appendChild(path);
+    for (let i = 1; i < n; i++) {
+      const t = i / n, y = 6 + 2 * t * (1 - t) * sag * 2;
+      const c = document.createElementNS(ns, 'circle');
+      c.setAttribute('cx', t * w); c.setAttribute('cy', y + 5); c.setAttribute('r', 5);
+      c.style.animationDelay = (-Math.random() * 3).toFixed(2) + 's';
+      svg.appendChild(c);
+    }
+  });
+
+  // parts stall + budget meter (middle of each bulk price range)
+  const PARTS = [
+    ['5 mm / 3 mm LED', 'basic light', '0.5–2', 1.25],
+    ['Self-cycling RGB LED', 'effects with no extra circuit', '3–8', 5.5],
+    ['Resistor (through-hole)', 'current limiting', '0.2–0.5', 0.35],
+    ['Capacitor', 'timing, decoupling', '0.5–2', 1.25],
+    ['Transistor (BC547 etc.)', 'switching, oscillators', '0.5–1', 0.75],
+    ['555 timer', 'blinking, tones', '3–5', 4],
+    ['Push button / slide switch', 'input, on-off', '1–3', 2],
+    ['Piezo buzzer', 'sound', '3–6', 4.5],
+    ['Microcontroller (CH32V003, ATtiny)', 'patterns, games, logic', '10–40', 25],
+    ['CR2032 holder', 'coin-cell power', '2–5', 3.5],
+    ['CR2032 cell', 'power', '8–15', 11.5],
+  ];
+  const menu = document.getElementById('menu'), basket = [];
+  menu.innerHTML = PARTS.map(([n, u, r], i) => `
+    <div class="menu-row"><span class="name"><b>${n}</b><i></i></span><span class="price">₹${r}</span>
+    <button type="button" data-i="${i}" aria-label="Add ${n}">+</button><span class="use">${u}</span></div>`).join('') +
+    `<div class="menu-row pcb"><span class="name"><b>PCB (small, 2-layer)</b><i></i></span>
+     <label class="price">₹<input id="pcb" type="number" min="0" step="0.5" placeholder="quote" aria-label="Your PCB quote in rupees"></label><span></span>
+     <span class="use">get a quote from Lion Circuits for your size</span></div>`;
+  const pcb = document.getElementById('pcb');
+  function draw() {
+    const total = basket.reduce((s, i) => s + PARTS[i][3], 0) + (+pcb.value || 0);
+    const over = total > 50, m = document.getElementById('meter');
+    document.getElementById('total').textContent = total % 1 ? total.toFixed(2) : total;
+    document.getElementById('fill').style.width = Math.min(100, total * 2) + '%';
+    m.classList.remove('over'); if (over) { void m.offsetWidth; m.classList.add('over'); }
+    document.getElementById('status').textContent = !total ? 'Empty board. Add some parts.'
+      : over ? `Over by ₹${(total - 50).toFixed(2)}. Cut something!`
+      : `₹${(50 - total).toFixed(2)} left to spend.`;
+    const counts = {}; basket.forEach(i => counts[i] = (counts[i] || 0) + 1);
+    document.getElementById('basket').innerHTML = Object.entries(counts).map(([i, c]) =>
+      `<li><span>${c} × ${PARTS[i][0]}</span><button type="button" data-rm="${i}" aria-label="Remove one ${PARTS[i][0]}">−</button></li>`).join('');
+  }
+  menu.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if (b) { basket.push(+b.dataset.i); draw(); } });
+  pcb.addEventListener('input', draw);
+  document.getElementById('basket').addEventListener('click', e => {
+    const b = e.target.closest('[data-rm]'); if (b) { basket.splice(basket.indexOf(+b.dataset.rm), 1); draw(); }
+  });
+  document.getElementById('clear').addEventListener('click', () => { basket.length = 0; pcb.value = ''; draw(); });
+
+  // judging wheel
+  let turns = 0;
+  document.getElementById('spin').addEventListener('click', () => {
+    turns += 3 + Math.random() * 2;
+    document.getElementById('wheel').style.transform = `rotate(${turns}turn)`;
+  });
+
+  // how-to bulbs light up as you scroll past
+  const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('on')), { rootMargin: '0px 0px -25% 0px' });
+  document.querySelectorAll('.bulb-steps li').forEach((li, i) => { li.style.transitionDelay = i * 0.12 + 's'; io.observe(li); });
+
+  // floating submit button once you're past the hero
+  const fs = document.querySelector('.float-submit');
+  new IntersectionObserver(([e]) => fs.classList.toggle('show', !e.isIntersecting && e.boundingClientRect.top < 0)).observe(document.querySelector('.hero'));
+  const sub = new IntersectionObserver(([e]) => e.isIntersecting && fs.classList.remove('show'));
+  sub.observe(document.getElementById('submit'));
+
+  document.querySelectorAll('[aria-disabled="true"]').forEach(b => b.addEventListener('click', e => e.preventDefault()));
+</script>
+</body>
+</html>

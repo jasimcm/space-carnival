@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Space Carnival — TinkerSpace</title>
+<meta name="description" content="Space Carnival, Dec 19 & 20. Celebrating three years of TinkerSpace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,600;0,800;1,300;1,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-top: #36569b;
+    --sky-bottom: #2b4a90;
+    --pink: #ff49b4;
+    --ink: #111;
+    --white: #fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom)) fixed;
+    color: var(--white);
+    font-family: "Poppins", system-ui, sans-serif;
+  }
+  /* paper grain, same as the poster */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: .28; mix-blend-mode: multiply;
+  }
+
+  /* 1920x1080 artboard, scaled to fit and pinned to the bottom so the garden meets the floor */
+  .stage {
+    position: absolute; left: 50%; bottom: 0; z-index: 1;
+    width: 1920px; height: 1080px;
+    transform-origin: 50% 100%;
+    transform: translateX(-50%) scale(var(--s, 1));
+  }
+  .stage > * { position: absolute; }
+
+  .brand { left: 96px; top: 74px; width: 440px; }
+  .brand img { display: block; width: 100%; }
+
+  .date { right: 92px; top: 46px; text-align: right; line-height: .8; }
+  .date .mon {
+    display: block; color: var(--pink); font-weight: 800; font-size: 150px; letter-spacing: -.08em;
+    margin-right: 8px;
+  }
+  .date .days {
+    display: block; font-style: italic; font-weight: 800; font-size: 168px; letter-spacing: -.09em;
+    color: var(--white); -webkit-text-stroke: 4px var(--ink); paint-order: stroke fill;
+    text-shadow: 4px 5px 0 var(--ink);
+  }
+
+  .title { left: 100px; top: 178px; width: 890px; z-index: 2; filter: drop-shadow(0 10px 18px rgba(10,20,60,.3)); }
+
+  .tagline {
+    left: 130px; top: 580px; font-size: 52px; line-height: 1.12; letter-spacing: -.035em;
+    font-style: italic; font-weight: 300;
+  }
+  .tagline em { display: block; font-style: normal; font-weight: 800; color: var(--pink); letter-spacing: -.05em; }
+
+  /* Badge competition call-to-action: a shadcn-style announcement pill */
+  .badge-cta {
+    left: 128px; top: 800px; z-index: 4; display: inline-flex; align-items: center; gap: 18px; height: 78px; padding: 0 30px 0 11px;
+    border-radius: 999px; text-decoration: none; color: var(--white); font-weight: 600; font-size: 26px; letter-spacing: -.01em; white-space: nowrap;
+    background: rgba(13, 20, 56, .62); border: 1.5px solid rgba(255, 255, 255, .2);
+    -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 18px 40px rgba(6, 12, 46, .35), inset 0 1px 0 rgba(255, 255, 255, .14);
+    transition: background .2s, border-color .2s, transform .2s;
+  }
+  .badge-cta:hover { background: rgba(13, 20, 56, .78); border-color: rgba(255, 255, 255, .38); transform: translateY(-2px); }
+  .badge-cta:focus-visible { outline: 3px solid var(--white); outline-offset: 4px; }
+  .badge-cta .tag { display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 22px; border-radius: 999px; background: var(--white); color: #151033; font-size: 20px; font-weight: 700; }
+  .badge-cta .dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; animation: live 1.8s ease-out infinite; }
+  @keyframes live { 0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, .6); } 100% { box-shadow: 0 0 0 9px rgba(34, 197, 94, 0); } }
+  .badge-cta .sep { width: 1.5px; height: 30px; background: rgba(255, 255, 255, .22); }
+  .badge-cta .meta { color: rgba(255, 255, 255, .65); font-weight: 500; font-size: 22px; }
+  .badge-cta svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
+  .badge-cta:hover svg { transform: translateX(4px); }
+
+  /* Art is pinned to the window edges (not the artboard) so wide screens never show a cut edge */
+  .scene { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .ground {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: calc(226px * var(--s, 1));
+    /* a tile edge lands exactly on the building's left edge, where the strip mirrors its grass */
+    background: url("assets/ground.webp") right calc(1306px * var(--s, 1)) bottom / auto 100% repeat-x;
+  }
+  .building {
+    position: absolute; right: 0; bottom: 0;
+    height: calc(890px * var(--s, 1));
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 9%);
+    mask-image: linear-gradient(to bottom, transparent, #000 9%);
+  }
+
+  .cloud { fill: var(--sky-top); stroke: var(--white); z-index: 3; stroke-width: 5; stroke-linejoin: round; stroke-linecap: round; animation: drift 7s ease-in-out infinite; }
+  .c1 { left: 52px; top: 150px; width: 170px; }
+  .c2 { left: -18px; top: 520px; width: 120px; animation-delay: -2s; }
+  .c3 { left: 1060px; top: 210px; width: 150px; animation-delay: -4s; }
+  .c4 { right: 70px; top: 470px; width: 130px; animation-delay: -1s; }
+  @keyframes drift { 50% { transform: translateX(14px); } }
+
+  .rise { opacity: 0; animation: rise .9s cubic-bezier(.2,.8,.2,1) forwards; }
+  .title.rise { animation-delay: .1s; }
+  .tagline.rise { animation-delay: .35s; }
+  /* backwards fill so the hover lift still works once the entrance finishes */
+  .badge-cta.rise { opacity: 1; animation-delay: .55s; animation-fill-mode: backwards; }
+  .date.rise { animation-delay: .2s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+
+  /* Phones and portrait tablets: poster-style stack, sized in vw instead of the 1920 artboard */
+  @media (max-aspect-ratio: 4/5) {
+    .stage { inset: 0; left: 0; width: auto; height: auto; transform: none; }
+    .brand { left: 6vw; top: 7vw; width: 42vw; }
+    .date { right: 5vw; top: 4.5vw; }
+    .date .mon { font-size: 15vw; margin-right: 1vw; }
+    .date .days { font-size: 16vw; -webkit-text-stroke-width: 2px; text-shadow: 2px 3px 0 var(--ink); }
+    /* centre title + tagline in the sky between the date and the building on tall phones */
+    /* building shrinks on short phones so it never runs into the button */
+    :root { --bh: min(92vw, 100vh - 126vw); }
+    .stage { --dy: max(0px, (100vh - var(--bh) - 126vw) / 2); }
+    .title { left: 4vw; top: calc(36vw + var(--dy)); width: 92vw; }
+    .tagline { left: 7vw; top: calc(78vw + var(--dy)); font-size: 6.6vw; }
+    .badge-cta { left: 7vw; right: 7vw; top: calc(104vw + var(--dy)); height: 13.5vw; gap: 2.4vw; padding: 0 3.6vw 0 1.6vw; font-size: 3.4vw; justify-content: space-between; }
+    .badge-cta svg { flex: none; }
+    .badge-cta .tag { height: 10vw; padding: 0 3.4vw; gap: 1.8vw; font-size: 3.2vw; }
+    .badge-cta .dot { width: 1.8vw; height: 1.8vw; }
+    .badge-cta .sep, .badge-cta .meta { display: none; }
+    .badge-cta svg { width: 5vw; height: 5vw; }
+    .building { height: var(--bh); }
+    .ground { height: calc(var(--bh) * .254); background-position: right calc(var(--bh) * 1.467) bottom; }
+    .c1 { left: 1vw; top: calc(33vw + var(--dy)); width: 20vw; }
+    .c2, .c4 { display: none; }
+    .c3 { left: auto; right: 6vw; top: calc(84vw + var(--dy)); width: 18vw; }
+    .cloud { stroke-width: 4; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cloud, .rise, .badge-cta .dot { animation: none; opacity: 1; }
+  }
+</style>
+</head>
+<body>
+  <div class="scene">
+    <div class="ground"></div>
+    <img class="building" src="assets/building.webp" alt="Illustration of TinkerSpace lit up with string lights and a flower garden">
+  </div>
+
+  <main class="stage" aria-label="Space Carnival, December 19 and 20, celebrating three years of TinkerSpace">
+    <div class="brand"><img src="assets/logo.png" alt="TinkerSpace Kochi"></div>
+
+    <div class="date rise">
+      <span class="mon">DEC</span>
+      <span class="days">19 &amp; 20</span>
+    </div>
+
+    <h1 class="title rise"><img src="assets/title.webp" alt="Space Carnival" style="width:100%;display:block"></h1>
+
+    <p class="tagline rise">echoes of years,<br>uniting community<em>in celebration.</em></p>
+
+    <a class="badge-cta rise" href="badge/">
+      <span class="tag"><i class="dot" aria-hidden="true"></i>Open</span>
+      <span>PCB Badge Design Competition</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="meta">Closes Nov 21</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+    </a>
+
+    <svg class="cloud c1" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 52h104a14 14 0 0 0-10-24 12 12 0 0 0-18-8 22 22 0 0 0-40 2 14 14 0 0 0-20 12A10 10 0 0 0 8 52z"/></svg>
+    <svg class="cloud c2" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 52h104a14 14 0 0 0-10-24 12 12 0 0 0-18-8 22 22 0 0 0-40 2 14 14 0 0 0-20 12A10 10 0 0 0 8 52z"/></svg>
+    <svg class="cloud c3" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 52h104a14 14 0 0 0-10-24 12 12 0 0 0-18-8 22 22 0 0 0-40 2 14 14 0 0 0-20 12A10 10 0 0 0 8 52z"/></svg>
+    <svg class="cloud c4" viewBox="0 0 120 60" aria-hidden="true"><path d="M8 52h104a14 14 0 0 0-10-24 12 12 0 0 0-18-8 22 22 0 0 0-40 2 14 14 0 0 0-20 12A10 10 0 0 0 8 52z"/></svg>
+  </main>
+
+<script>
+  const fit = () => document.documentElement.style.setProperty('--s', Math.min(innerWidth / 1920, innerHeight / 1080));
+  addEventListener('resize', fit);
+  fit();
+</script>
+</body>
+</html>
