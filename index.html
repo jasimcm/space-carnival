@@ -20,7 +20,9 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; overflow: hidden; }
+  html { scroll-behavior: smooth; }
+  /* the hero is exactly one screen; the events scroll in underneath it */
+  .hero { position: relative; height: 100vh; height: 100svh; overflow: hidden; }
   body { background: var(--violet); color: #fff; font-family: "Poppins", system-ui, sans-serif; }
   /* the crayon texture sits on the violet in overlay mode, exactly like the Figma layer */
   body::before {
@@ -46,14 +48,31 @@
     left: 218px; top: 125px; width: 1030px; height: 193px;
     display: flex; align-items: center; justify-content: center;
     font: 400 123.5px/108px "Homemade Apple", cursive; white-space: nowrap;
-    transform: rotate(4.74deg);
+    --r: 4.74deg; --d: -7; pointer-events: none;
+    /* written in from left to right, like the pen stroke on the poster */
+    animation: write 1.7s cubic-bezier(.45, .05, .35, 1) .15s backwards;
   }
+  @keyframes write { from { clip-path: inset(-40% 100% -40% -5%); } to { clip-path: inset(-40% -5% -40% -5%); } }
   .script br { display: none; }
 
-  .building { left: 0; top: 162px; width: 935px; }
-  .mouse { left: 687px; top: 238px; width: 248px; animation: bob 2.8s ease-in-out infinite; }
-  .frog { left: 2px; top: 64px; width: 165px; transform: rotate(21.88deg); }
-  .frog img { width: 100%; animation: bob 3.4s ease-in-out infinite -1s; }
+  /* depth: JS sets --mx/--my (-1..1) from the pointer; each layer drifts by its own --d */
+  .depth {
+    transform: translate(calc(var(--mx, 0) * var(--d, 0) * 1px), calc(var(--my, 0) * var(--d, 0) * 1px)) rotate(var(--r, 0deg));
+    transition: transform .6s cubic-bezier(.2, .8, .2, 1);
+  }
+  .building { left: 0; top: 162px; width: 935px; --d: 4; }
+
+  /* characters are buttons: poke one and it jumps and throws confetti */
+  .char { padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .char img { width: 100%; transition: rotate .2s; }
+  .char:hover img { rotate: -5deg; }
+  .char:focus-visible { outline: 4px solid var(--yellow); outline-offset: 6px; border-radius: 24px; }
+  .mouse { left: 687px; top: 238px; width: 248px; --d: 12; }
+  .mouse img { animation: bob 2.8s ease-in-out infinite; }
+  .frog { left: 2px; top: 64px; width: 165px; --r: 21.88deg; --d: 16; }
+  .frog img { animation: bob 3.4s ease-in-out infinite -1s; }
+  .bear { --d: 18; }
+  .bear img { animation: bob 3.1s ease-in-out infinite -1.6s; }
   .stage .bear { display: none; }
   @keyframes bob { 50% { translate: 0 -6px; } }
 
@@ -61,6 +80,9 @@
   .when .date { font-weight: 800; font-size: 50px; line-height: 1; letter-spacing: -.03em; }
   .when .date span { color: var(--yellow); }
   .when .sub { margin-top: 10px; font-weight: 600; font-size: 18px; color: var(--cream); }
+  .when .count { margin-top: 6px; font-weight: 600; font-size: 16px; color: var(--cream); }
+  .when .count b { color: var(--yellow); font-weight: 800; }
+  .when .count:empty { display: none; }
 
   /* the yellow "Apply with" sticker from the poster, pointing at the badge competition */
   .sticker {
@@ -78,8 +100,186 @@
   .sticker small i { width: 9px; height: 9px; border-radius: 50%; background: #16a34a; }
   .sticker small em { margin-left: auto; font-style: normal; font-size: 18px; }
 
+  .cue {
+    left: 1088px; top: 672px; color: var(--cream); text-decoration: none;
+    font-weight: 600; font-size: 15px; letter-spacing: -.01em;
+  }
+  .cue span { display: inline-block; animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 50% { translate: 0 4px; } }
+
+  .confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+  /* ---------- light it up: real (Blender-rendered) parts on the crayon sky ---------- */
+  .lab-sec { position: relative; padding: 96px 24px 8px; }
+  .lab-sec .events-head { max-width: 1040px; }
+  .lab { position: relative; max-width: 1040px; margin: 0 auto; }
+  .lab-status {
+    position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; margin: 0 auto;
+    padding: 9px 12px 9px 16px; background: var(--cream); color: #000; border: 3px solid #000; border-radius: 999px;
+    box-shadow: 0 5px 0 #000; font-weight: 700; font-size: 15px; transform: rotate(-1.2deg);
+  }
+  .lab-status i { flex: none; width: 12px; height: 12px; border: 2.5px solid #000; border-radius: 50%; background: var(--yellow); }
+  .lab-status b { flex: none; padding: 2px 9px; border-radius: 999px; background: #000; color: #fff; font-size: 12px; }
+  .lab svg { display: block; width: 100%; height: auto; margin-top: -6px; touch-action: none; user-select: none; -webkit-user-select: none; overflow: visible; }
+  .hand { font: 400 21px "Homemade Apple", cursive; fill: var(--cream); pointer-events: none; }
+  .lab-ctrl { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 18px; font-weight: 600; font-size: 15px; color: var(--cream); }
+  .lab-ctrl button { border: 0; background: none; padding: 2px 0; color: #fff; font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .45); text-underline-offset: 4px; }
+  .lab-ctrl button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  .lab-ctrl span { opacity: .7; }
+
+  /* night falls only on TinkerSpace; switching on swaps the dark halo for a warm glow */
+  .night { opacity: .9; transition: opacity 1.2s; }
+  .glow { opacity: 0; transition: opacity 1.4s .2s; }
+  .lit .night { opacity: 0; } .lit .glow { opacity: 1; }
+  .bld { filter: brightness(.33) saturate(.5); transition: filter 1.4s; }
+  .lit .bld { filter: none; }
+  .bulb { fill: #ffe45c; opacity: .12; transform-box: fill-box; transform-origin: center; transition: opacity .25s; }
+  .lit .bulb { opacity: 1; transition-delay: calc(var(--i) * 14ms + .3s); animation: twinkle 1.7s ease-in-out var(--tw) infinite; }
+  @keyframes twinkle { 50% { transform: scale(.65); } }
+
+  .crew image { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; transform: translateY(30px) scale(.8); transition: opacity .35s, transform .5s cubic-bezier(.3, 1.6, .5, 1); }
+  .lit .crew image { opacity: 1; transform: none; transition-delay: 1.3s; animation: dance .8s ease-in-out 1.9s infinite alternate; }
+  .lit .crew image:nth-child(2) { transition-delay: 1.45s; animation-delay: 2.1s; }
+  .lit .crew image:nth-child(3) { transition-delay: 1.6s; animation-delay: 2.3s; }
+  @keyframes dance { from { transform: rotate(-7deg); } to { transform: rotate(7deg) translateY(-6px); } }
+
+  /* rubbery cables: black outline, coloured insulation, a soft highlight */
+  .wire path { fill: none; stroke-linecap: round; }
+  .wire path:nth-child(1) { stroke: #000; stroke-width: 13; }
+  .wire path:nth-child(2) { stroke-width: 8.5; }
+  .wire path:nth-child(3) { stroke: #fff; stroke-width: 2.4; opacity: .5; transform: translate(-1.2px, -2.4px); }
+  .wire.red path:nth-child(2) { stroke: #e5383b; }
+  .wire.black path:nth-child(2) { stroke: #2a2a2e; }
+  .wire.live path:nth-child(2) { stroke: var(--yellow); stroke-dasharray: 2 15; }
+  .wire.live path:nth-child(3) { display: none; }
+  .wire.live { opacity: 0; pointer-events: none; } .wire.live.show { opacity: 1; }
+  .wire.fresh { animation: snap .35s ease-out; }
+  @keyframes snap { from { opacity: 0; } }
+
+  .term { fill: rgba(253, 233, 0, 0); stroke: rgba(253, 233, 0, 0); stroke-width: 3; cursor: grab; }
+  .term.next { animation: beckon 1.1s ease-in-out infinite; }
+  @keyframes beckon { 50% { fill: rgba(253, 233, 0, .35); stroke: rgba(253, 233, 0, .9); } }
+  #switch { cursor: pointer; outline: none; }
+  #lever .on { opacity: 0; } #lever.up .on { opacity: 1; } #lever.up .off { opacity: 0; }
+  #lever.nope { animation: shake .4s; }
+  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+  #switch.next image, #switch:focus-visible image { animation: swglow 1.1s ease-in-out infinite; }
+  @keyframes swglow { 50% { filter: drop-shadow(0 0 9px #fde900); } }
+
+  /* ---------- print your ticket ---------- */
+  .tix { position: relative; padding: 40px 24px 40px; }
+  .tix-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .tix-form { background: var(--cream); color: var(--ink); border: 3px solid #000; border-radius: 24px; padding: 28px; box-shadow: 0 8px 0 #000; transform: rotate(-1deg); }
+  .tix-form .lbl { display: block; margin-bottom: 10px; font-weight: 700; font-size: 15px; }
+  .tix-form input[type=text] { width: 100%; padding: 16px 16px 8px; border: 3px solid #000; border-radius: 14px; background: #fff; color: var(--violet); font: 400 24px "Homemade Apple", cursive; }
+  .tix-form input[type=text]:focus { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .tix-form fieldset { margin-top: 24px; border: 0; }
+  .tix-form legend { margin-bottom: 10px; font-weight: 700; font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { position: relative; }
+  .chip input { position: absolute; opacity: 0; }
+  .chip span { display: inline-block; padding: 8px 14px; border: 2.5px solid #000; border-radius: 999px; background: #fff; font-weight: 600; font-size: 14px; cursor: pointer; transition: background .15s, box-shadow .15s, transform .15s; }
+  .chip input:checked + span { background: var(--yellow); box-shadow: 0 3px 0 #000; transform: translateY(-2px); }
+  .chip input:focus-visible + span { outline: 3px solid var(--violet); outline-offset: 2px; }
+  .print { margin-top: 26px; padding: 14px 24px; border: 3px solid #000; border-radius: 14px; background: var(--violet); color: #fff; font: 800 18px Poppins, sans-serif; box-shadow: 0 6px 0 #000; cursor: pointer; transition: transform .15s, box-shadow .15s; }
+  .print:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #000; }
+  .print:active { transform: translateY(4px); box-shadow: 0 2px 0 #000; }
+  .print:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+
+  /* the ticket machine is a Blender render; the ticket canvas slides out of its slot */
+  .machine-wrap { display: flex; flex-direction: column; align-items: center; }
+  .machine { position: relative; width: min(420px, 100%); margin-bottom: 56%; }
+  .machine-img { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 24px rgba(16, 8, 46, .35)); }
+  .machine.working .machine-img { animation: chug .16s linear infinite; }
+  @keyframes chug { 50% { translate: 1px -1px; } }
+  /* marquee bulbs chase while printing */
+  .machine::after {
+    content: ""; position: absolute; left: 6%; right: 6%; top: 1%; height: 19%; border-radius: 14px; pointer-events: none;
+    background: radial-gradient(closest-side, rgba(255, 228, 92, .55), transparent); opacity: 0;
+  }
+  .machine.working::after { animation: marquee .3s steps(2) infinite; }
+  @keyframes marquee { 50% { opacity: 1; } }
+  .tix-out { position: absolute; top: 77.8%; left: 21.7%; width: 44%; aspect-ratio: 1080 / 1350; overflow: hidden; transform-origin: 50% 0; }
+  .tix-out canvas { display: block; width: 100%; height: auto; transform: translateY(-101%); }
+  .tix-out.printed canvas { animation: printout 2.2s steps(11, end) forwards; }
+  .tix-out.done { overflow: visible; transform: scale(1.5) rotate(-3deg); transition: transform .6s cubic-bezier(.3, 1.4, .5, 1); }
+  .tix-out.done canvas { transform: none; animation: none; filter: drop-shadow(0 10px 0 rgba(0, 0, 0, .9)); }
+  @keyframes printout { to { transform: translateY(0); } }
+  .tix-out .ph { position: absolute; inset: 14% 6% auto; text-align: center; color: var(--cream); font: 400 15px/1.5 "Homemade Apple", cursive; }
+  .tix-out.printed .ph { display: none; }
+  .tix-after { display: flex; gap: 12px; margin-top: 8px; }
+  .tix-after[hidden] { display: none; }
+  .tix-after button { padding: 10px 18px; border: 3px solid #000; border-radius: 12px; background: var(--yellow); color: #000; font: 700 15px Poppins, sans-serif; box-shadow: 0 5px 0 #000; cursor: pointer; }
+  .tix-after button:active { transform: translateY(3px); box-shadow: 0 2px 0 #000; }
+
+  @media (max-width: 860px) {
+    .tix-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 560px) {
+    .lab-sec { padding: 64px 6px 8px; }
+    .lab-sec .events-head { padding: 0 10px; }
+    .lab-status { font-size: 12.5px; padding: 7px 10px 7px 12px; }
+    .lab-ctrl { font-size: 13px; padding: 0 10px; }
+    .tix { padding: 24px 16px 24px; }
+    .tix-form { padding: 20px; }
+  }
+
+  /* ---------- events ---------- */
+  .events { position: relative; padding: 88px 24px 96px; }
+  .events-head { max-width: 1120px; margin: 0 auto 44px; }
+  .events-head h2 { font: 400 clamp(52px, 7vw, 92px)/1.15 "Homemade Apple", cursive; transform: rotate(-3deg); transform-origin: 0 50%; }
+  .events-head p { margin-top: 18px; max-width: 560px; font-weight: 600; font-size: 18px; line-height: 1.5; color: var(--cream); }
+
+  .grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .card {
+    display: flex; flex-direction: column; background: var(--cream); color: var(--ink);
+    border: 3px solid var(--ink); border-radius: 18px; overflow: hidden; box-shadow: 0 7px 0 var(--ink);
+  }
+  .card { --rot: -1.2deg; transform: rotate(var(--rot)); transition: transform .45s cubic-bezier(.2, .8, .2, 1), opacity .45s, box-shadow .2s; }
+  .card:nth-child(even) { --rot: 1.2deg; }
+  .card:hover { transform: translateY(-8px) rotate(0deg); box-shadow: 0 13px 0 var(--ink); }
+  /* dealt in one by one when the grid scrolls into view (only when JS is running) */
+  .js .card:not(.in) { opacity: 0; transform: translateY(48px) rotate(calc(var(--rot) * 5)); }
+  .js .card.in { transition-delay: calc(var(--i, 0) * 110ms); }
+  .js .card.in:hover { transition-delay: 0s; }
+  .card img { display: block; width: 100%; height: auto; aspect-ratio: 436 / 583; object-fit: cover; border-bottom: 3px solid var(--ink); }
+  .card-body { display: flex; flex-direction: column; flex: 1; padding: 18px 18px 20px; }
+  .card time { align-self: flex-start; padding: 4px 11px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
+  .card h3 { margin-top: 12px; font-weight: 800; font-size: 22px; line-height: 1.1; letter-spacing: -.03em; }
+  .card ul { margin: 12px 0 18px; padding-left: 18px; font-weight: 500; font-size: 14px; line-height: 1.45; }
+  .card li + li { margin-top: 5px; }
+  .card .go {
+    margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border: 2.5px solid var(--ink); border-radius: 12px; background: var(--yellow); color: var(--ink);
+    font-weight: 700; font-size: 15px; text-decoration: none; box-shadow: 0 4px 0 var(--ink); transition: transform .15s, box-shadow .15s;
+  }
+  .card .go:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--ink); }
+  .card .go:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .card .go:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+
+  .finale { max-width: 1120px; margin: 56px auto 0; text-align: center; font-weight: 700; font-size: 20px; color: var(--cream); }
+  .finale b { color: var(--yellow); }
+
+  @media (max-width: 1000px) { .grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+  @media (max-width: 560px) {
+    .events { padding: 56px 16px 48px; }
+    .events-head { margin-bottom: 28px; }
+    .events-head p { font-size: 15px; }
+    /* phones: compact row cards, small poster on the left, details beside it */
+    .grid { grid-template-columns: 1fr; gap: 16px; }
+    .card { flex-direction: row; border-radius: 16px; box-shadow: 0 5px 0 var(--ink); }
+    .card img { width: 104px; flex: none; align-self: stretch; height: auto; aspect-ratio: auto; border-bottom: 0; border-right: 3px solid var(--ink); }
+    .card-body { padding: 12px 14px 14px; }
+    .card time { font-size: 11px; padding: 3px 9px; }
+    .card h3 { margin-top: 8px; font-size: 17px; }
+    .card ul { margin: 6px 0 12px; padding-left: 15px; font-size: 12.5px; line-height: 1.4; }
+    .card li + li { margin-top: 2px; }
+    .card li:nth-child(n+3) { display: none; }
+    .card .go { padding: 6px 12px; font-size: 13px; border-radius: 10px; box-shadow: 0 3px 0 var(--ink); }
+    .card:hover { transform: rotate(var(--rot)); box-shadow: 0 5px 0 var(--ink); }
+  }
+
   .fade { animation: fade .8s ease-out backwards; }
-  .script.fade { animation-delay: .1s; }
   .when.fade { animation-delay: .35s; }
   .sticker.fade { animation-delay: .5s; }
   @keyframes fade { from { opacity: 0; } }
@@ -89,60 +289,293 @@
     .stage { left: 50%; width: 1080px; height: 2300px; transform-origin: 50% 100%; transform: translateX(-50%) scale(var(--s, 1)); }
     .brand { left: 36px; top: 124px; width: 268px; }
     .wordmark { left: 824px; top: 117px; width: 222px; }
-    .script { left: 108px; top: 300px; width: 872px; height: 498px; font-size: 200px; line-height: 181px; transform: rotate(-9.85deg); }
+    .script { left: 108px; top: 300px; width: 872px; height: 498px; font-size: 200px; line-height: 181px; --r: -9.85deg; }
     .script br { display: inline; }
-    .when { left: 64px; top: 852px; transform: rotate(-4.34deg); }
+    .when { left: 64px; top: 840px; transform: rotate(-4.34deg); }
     .when .date { font-size: 104px; }
     .when .sub { font-size: 36px; margin-top: 16px; }
-    .sticker { left: 64px; top: 1060px; width: 600px; padding: 22px 34px 24px; border-width: 5px; border-radius: 34px; box-shadow: 0 11px 0 var(--ink); }
+    .when .count { font-size: 32px; margin-top: 10px; }
+    .sticker { left: 64px; top: 1090px; width: 600px; padding: 22px 34px 24px; border-width: 5px; border-radius: 34px; box-shadow: 0 11px 0 var(--ink); }
     .sticker b { font-size: 40px; }
     .sticker small { font-size: 30px; gap: 14px; margin-top: 10px; }
     .sticker small i { width: 18px; height: 18px; }
     .sticker small em { font-size: 38px; }
     .building { left: -18px; top: 1535px; width: 1233px; }
-    .stage .bear { display: block; left: 641px; top: 1086px; width: 583px; animation: bob 3.1s ease-in-out infinite -1.6s; }
+    .cue { display: none; }
+    .stage .bear { display: block; left: 641px; top: 1086px; width: 583px; }
     .mouse { left: 300px; top: 1304px; width: 479px; }
     .frog { left: 2px; top: 1272px; width: 290px; }
     @keyframes bob { 50% { translate: 0 -12px; } }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fade, .mouse, .frog img, .bear { animation: none; }
+    .fade, .script, .char img, .cue span { animation: none; }
+    .depth, .card { transition: none; }
+    .lit .bulb, .lit .crew image, .term.next, #switch.next image, .tix-out.printed canvas, .machine.working .machine-img, .machine.working::after { animation: none; }
+    .tix-out.printed canvas { transform: none; }
+    .js .card:not(.in) { opacity: 1; transform: rotate(var(--rot)); }
   }
 </style>
 </head>
 <body>
-  <main class="stage" aria-label="Space Carnival at TinkerSpace Kochi, December 19 and 20">
-    <img class="building" src="assets/carnival/building.webp" alt="Crayon drawing of TinkerSpace strung with fairy lights">
-    <img class="bear" src="assets/carnival/bear.webp" alt="">
-    <img class="mouse" src="assets/carnival/mouse.webp" alt="">
-    <div class="frog"><img src="assets/carnival/frog.webp" alt=""></div>
+  <header class="hero">
+  <div class="stage" aria-label="Space Carnival at TinkerSpace Kochi, December 19 and 20">
+    <img class="building depth" src="assets/carnival/building.webp" alt="Crayon drawing of TinkerSpace strung with fairy lights">
+    <button class="char bear depth" type="button" aria-label="Poke the juggling bear"><img src="assets/carnival/bear.webp" alt=""></button>
+    <button class="char mouse depth" type="button" aria-label="Poke the mouse"><img src="assets/carnival/mouse.webp" alt=""></button>
+    <button class="char frog depth" type="button" aria-label="Poke the frog"><img src="assets/carnival/frog.webp" alt=""></button>
 
     <div class="brand"><img src="assets/logo.png" alt="TinkerSpace Kochi"></div>
     <div class="wordmark"><img src="assets/carnival/wordmark.svg" alt=""></div>
 
-    <h1 class="script fade">Space <br>Carnival</h1>
+    <h1 class="script depth">Space <br>Carnival</h1>
 
     <div class="when fade">
       <p class="date">Dec 19 <span>&amp;</span> 20</p>
       <p class="sub">TinkerSpace turns four · Kochi</p>
+      <p class="count" id="count" aria-live="polite"></p>
     </div>
 
     <a class="sticker fade" href="badge/">
       <b>PCB Badge Design Competition</b>
       <small><i aria-hidden="true"></i>Open · closes Nov 26<em aria-hidden="true">→</em></small>
     </a>
+
+    <a class="cue" href="#lightup">light it up <span aria-hidden="true">↓</span></a>
+  </div>
+  </header>
+
+  <section class="lab-sec" id="lightup">
+    <div class="events-head">
+      <h2>light it up</h2>
+      <p>It's the night before the carnival and TinkerSpace is dark. Wire the battery to the switch, the switch to the fairy lights, then flip it.</p>
+    </div>
+    <div class="lab">
+      <p class="lab-status" aria-live="polite"><i aria-hidden="true"></i><span>Drag a wire from the battery’s + to the switch</span><b>1/3</b></p>
+      <svg viewBox="0 40 1000 600" role="img" aria-label="A circuit toy: a 9V battery, a toggle switch and TinkerSpace strung with fairy lights">
+        <defs>
+          <filter id="glowf" x="-300%" y="-300%" width="700%" height="700%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <radialGradient id="nightg"><stop offset="0" stop-color="#0b0426" stop-opacity=".85"/><stop offset=".6" stop-color="#0b0426" stop-opacity=".5"/><stop offset="1" stop-color="#0b0426" stop-opacity="0"/></radialGradient>
+          <radialGradient id="glowg"><stop offset="0" stop-color="#ffd65a" stop-opacity=".55"/><stop offset=".55" stop-color="#ff9f43" stop-opacity=".18"/><stop offset="1" stop-color="#ff9f43" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse class="night" cx="680" cy="390" rx="400" ry="290" fill="url(#nightg)"/>
+        <ellipse class="glow" cx="680" cy="380" rx="420" ry="300" fill="url(#glowg)"/>
+        <image class="bld" href="assets/carnival/building.webp" x="370" y="190" width="620" height="401"/>
+        <g class="bulbs" filter="url(#glowf)"></g>
+        <g class="crew">
+          <image href="assets/carnival/frog.webp" x="358" y="82" width="107" height="140"/>
+          <image href="assets/carnival/mouse.webp" x="790" y="186" width="164" height="161"/>
+          <image href="assets/carnival/bear.webp" x="852" y="8" width="146" height="183"/>
+        </g>
+
+        <image href="assets/carnival/block.webp" x="292" y="486" width="104" height="95.9"/>
+        <image href="assets/carnival/battery.webp" x="6" y="318" width="150" height="249"/>
+        <g class="wire black"><path d="M104.6 340.1 C150 430 290 640 352.2 558"/><path d="M104.6 340.1 C150 430 290 640 352.2 558"/><path d="M104.6 340.1 C150 430 290 640 352.2 558"/></g>
+        <g id="switch" tabindex="0" role="button" aria-label="Flip the switch">
+          <g id="lever">
+            <image class="off" href="assets/carnival/switch-off.webp" x="150" y="250" width="240" height="176.7"/>
+            <image class="on" href="assets/carnival/switch-on.webp" x="150" y="250" width="240" height="176.7"/>
+          </g>
+        </g>
+        <g class="wire red" id="w1"><path/><path/><path/></g>
+        <g class="wire red" id="w2"><path/><path/><path/></g>
+        <g class="wire live" id="wlive"><path/><path/><path/></g>
+
+        <text class="hand" x="22" y="610" transform="rotate(-4 80 604)">9V battery</text>
+        <text class="hand" x="196" y="244" transform="rotate(-5 240 238)">the switch</text>
+        <text class="hand" x="404" y="622" transform="rotate(-3 470 616)">← fairy lights</text>
+
+        <circle class="term" id="t-bat" cx="54.4" cy="328.7" r="30"/>
+        <circle class="term" id="t-swa" cx="192.8" cy="327.5" r="30"/>
+        <circle class="term" id="t-swb" cx="344.5" cy="349.6" r="30"/>
+        <circle class="term" id="t-led" cx="315.3" cy="552.3" r="30"/>
+      </svg>
+      <div class="lab-ctrl"><button type="button" data-auto>do it for me</button><button type="button" data-reset>start over</button><span>drag between the glowing ends, or tap one then the other</span></div>
+    </div>
+  </section>
+
+  <main class="events" id="events">
+    <div class="events-head">
+      <h2>the line-up</h2>
+      <p>Four tournaments lead up to the carnival weekend. Pick your game, sign up, and come play.</p>
+    </div>
+
+    <div class="grid">
+      <article class="card">
+        <img src="assets/events/badminton.webp" alt="Space Carnival Badminton Tournament poster" loading="lazy" width="436" height="583">
+        <div class="card-body">
+          <time datetime="2026-12-12">Sat · 12 Dec</time>
+          <h3>Badminton Tournament</h3>
+          <ul>
+            <li>Men's singles, women's singles and mixed doubles</li>
+            <li>Doubles teams of 2; solo sign-ups are paired by draw</li>
+            <li>Non-marking court shoes. Bring your racquet, shuttles provided</li>
+          </ul>
+          <a class="go" href="https://www.instagram.com/spacebar_ts/" target="_blank" rel="noopener">Register <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="assets/events/men-football.webp" alt="Space Carnival Men's Football Tournament poster" loading="lazy" width="436" height="583">
+        <div class="card-body">
+          <time datetime="2026-12-13">Sun · 13 Dec</time>
+          <h3>Men's Football Tournament</h3>
+          <ul>
+            <li>6-a-side with 2 rotating subs, 5-minute halves</li>
+            <li>Sign up as a team of 4 or on your own; teams are filled by auction</li>
+            <li>Boots are mandatory</li>
+          </ul>
+          <a class="go" href="https://www.instagram.com/spacebar_ts/" target="_blank" rel="noopener">Register <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="assets/events/women-football.webp" alt="Space Carnival Women's Football Tournament poster" loading="lazy" width="436" height="583">
+        <div class="card-body">
+          <time datetime="2026-12-13">Sun · 13 Dec</time>
+          <h3>Women's Football Tournament</h3>
+          <ul>
+            <li>6-a-side with 2 rotating subs, 5-minute halves</li>
+            <li>Sign up as a team of 4 or on your own; teams are filled by auction</li>
+            <li>Boots are mandatory</li>
+          </ul>
+          <a class="go" href="https://www.instagram.com/spacebar_ts/" target="_blank" rel="noopener">Register <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img src="assets/events/esports.webp" alt="Space Carnival Esports Tournament poster" loading="lazy" width="436" height="582">
+        <div class="card-body">
+          <time datetime="2026-12-16">16 &amp; 17 Dec</time>
+          <h3>Esports Tournament</h3>
+          <ul>
+            <li>eFootball, PUBG Mobile, Call of Duty: Mobile and Mini Militia</li>
+            <li>PUBG, CODM and Mini Militia are solo</li>
+            <li>eFootball: Dream Team, 10-minute matches</li>
+          </ul>
+          <a class="go" href="https://www.instagram.com/spacebar_ts/" target="_blank" rel="noopener">Register <span aria-hidden="true">↗</span></a>
+        </div>
+      </article>
+    </div>
+
   </main>
 
+  <section class="tix" id="ticket">
+    <div class="events-head">
+      <h2>print your ticket</h2>
+      <p>Put your name on it, pick your events, and the machine prints you a Space Carnival ticket to download and share.</p>
+    </div>
+    <div class="tix-grid">
+      <form class="tix-form">
+        <label><span class="lbl">Your name</span><input type="text" name="name" maxlength="26" placeholder="Your name" autocomplete="nickname"></label>
+        <fieldset>
+          <legend>Your events</legend>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" name="ev" value="Carnival weekend" data-when="19–20 Dec" checked><span>Carnival weekend · 19–20 Dec</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Badminton" data-when="12 Dec"><span>Badminton · 12 Dec</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Men's Football" data-when="13 Dec"><span>Men's Football · 13 Dec</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Women's Football" data-when="13 Dec"><span>Women's Football · 13 Dec</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Esports" data-when="16–17 Dec"><span>Esports · 16–17 Dec</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Badge Competition" data-when="by 26 Nov"><span>Badge Competition</span></label>
+          </div>
+        </fieldset>
+        <button class="print" type="submit">Print my ticket</button>
+      </form>
+      <div class="machine-wrap">
+        <div class="machine">
+          <img class="machine-img" src="assets/carnival/machine.webp" alt="A pink carnival ticket machine with a glowing TICKETS marquee" width="823" height="1064">
+          <div class="tix-out"><canvas class="ticket" width="1080" height="1350" role="img" aria-label="Your Space Carnival ticket"></canvas><p class="ph">your ticket prints here</p></div>
+        </div>
+        <div class="tix-after" hidden><button type="button" data-download>Download ticket</button><button type="button" data-share>Share</button></div>
+      </div>
+    </div>
+    <p class="finale">Then it all comes together at TinkerSpace Kochi on <b>Dec 19 &amp; 20</b>.</p>
+  </section>
+
+<canvas class="confetti" aria-hidden="true"></canvas>
+
 <script>
+  document.documentElement.classList.add('js');
+  const calm = matchMedia('(prefers-reduced-motion: reduce)');
   const portrait = matchMedia('(max-aspect-ratio: 4/5)');
   const fit = () => {
     const [w, h] = portrait.matches ? [1080, 2300] : [1280, 720];
-    const el = document.documentElement;
-    el.style.setProperty('--s', Math.min(el.clientWidth / w, el.clientHeight / h));
+    const hero = document.querySelector('.hero');
+    document.documentElement.style.setProperty('--s', Math.min(hero.clientWidth / w, hero.clientHeight / h));
   };
   addEventListener('resize', fit);
   fit();
+
+  // countdown to the carnival (Dec 19, 2026, midnight in Kochi)
+  (() => {
+    const start = Date.UTC(2026, 11, 18, 18, 30), end = Date.UTC(2026, 11, 20, 18, 30), now = Date.now();
+    const el = document.getElementById('count');
+    if (now >= end) return;
+    if (now >= start) { el.innerHTML = '<b>It\u2019s carnival time!</b>'; return; }
+    const days = Math.ceil((start - now) / 864e5);
+    el.innerHTML = days === 1 ? '<b>Tomorrow!</b>' : `<b>${days} days</b> to go`;
+  })();
+
+  // pointer parallax on the hero
+  const stage = document.querySelector('.stage');
+  if (matchMedia('(pointer: fine)').matches) {
+    addEventListener('pointermove', e => {
+      if (calm.matches) return;
+      stage.style.setProperty('--mx', (e.clientX / innerWidth - .5) * 2);
+      stage.style.setProperty('--my', (e.clientY / innerHeight - .5) * 2);
+    }, { passive: true });
+  }
+
+  // confetti
+  const canvas = document.querySelector('.confetti'), ctx = canvas.getContext('2d');
+  const colors = ['#fde900', '#ff4fb8', '#22c55e', '#38bdf8', '#ff7a1a', '#ffffff'];
+  let bits = [], running = false;
+  const size = () => { const r = devicePixelRatio || 1; canvas.width = innerWidth * r; canvas.height = innerHeight * r; ctx.setTransform(r, 0, 0, r, 0, 0); };
+  addEventListener('resize', size); size();
+  function burst(x, y) {
+    for (let i = 0; i < 46; i++) {
+      const a = -Math.PI / 2 + (Math.random() - .5) * 2.2, v = 5 + Math.random() * 8;
+      bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 6 + Math.random() * 7, h: 4 + Math.random() * 6,
+        r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: colors[i % colors.length], life: 1 });
+    }
+    if (!running) { running = true; requestAnimationFrame(tick); }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    bits = bits.filter(b => b.life > 0 && b.y < innerHeight + 20);
+    for (const b of bits) {
+      b.vy += .32; b.vx *= .985; b.x += b.vx; b.y += b.vy; b.r += b.vr; b.life -= .011;
+      ctx.save(); ctx.globalAlpha = Math.min(1, b.life * 2); ctx.translate(b.x, b.y); ctx.rotate(b.r);
+      ctx.fillStyle = b.c; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+      ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.strokeRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore();
+    }
+    if (bits.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+  }
+
+  // poke a character: it jumps, spins a little and throws confetti
+  document.querySelectorAll('.char').forEach(btn => btn.addEventListener('click', e => {
+    if (calm.matches) return;
+    const img = btn.querySelector('img');
+    img.animate([
+      { translate: '0 0', scale: '1', rotate: '0deg' },
+      { translate: '0 -18%', scale: '1.08', rotate: '-12deg', offset: .35 },
+      { translate: '0 2%', scale: '.96', rotate: '8deg', offset: .7 },
+      { translate: '0 0', scale: '1', rotate: '0deg' }
+    ], { duration: 700, easing: 'cubic-bezier(.3, .7, .3, 1)' });
+    const r = btn.getBoundingClientRect();
+    burst(e.clientX || r.left + r.width / 2, e.clientY || r.top + r.height / 3);
+  }));
+
+  // deal the event cards in when they scroll into view
+  const cards = document.querySelectorAll('.card');
+  cards.forEach((c, i) => c.style.setProperty('--i', i));
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+    }), { threshold: .15 });
+    cards.forEach(c => io.observe(c));
+  } else cards.forEach(c => c.classList.add('in'));
 </script>
+<script src="assets/carnival.js" defer></script>
 </body>
 </html>
