@@ -194,7 +194,7 @@
   .js .card:not(.in) { opacity: 0; transform: translateY(48px) rotate(calc(var(--rot) * 5)); }
   .js .card.in { transition-delay: calc(var(--i, 0) * 110ms); }
   .js .card.in:hover { transition-delay: 0s; }
-  .card img { display: block; width: 100%; height: auto; aspect-ratio: 436 / 583; object-fit: cover; border-bottom: 3px solid var(--ink); }
+  .card img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; object-position: 50% 45%; border-bottom: 3px solid var(--ink); }
   .card-body { display: flex; flex-direction: column; flex: 1; padding: 18px 18px 20px; }
   .card time { align-self: flex-start; padding: 4px 11px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 13px; letter-spacing: .02em; }
   .card h3 { margin-top: 12px; font-weight: 800; font-size: 22px; line-height: 1.1; letter-spacing: -.03em; }
@@ -220,7 +220,7 @@
     /* phones: compact row cards, small poster on the left, details beside it */
     .grid { grid-template-columns: 1fr; gap: 16px; }
     .card { flex-direction: row; border-radius: 16px; box-shadow: 0 5px 0 var(--ink); }
-    .card img { width: 104px; flex: none; align-self: stretch; height: auto; aspect-ratio: auto; border-bottom: 0; border-right: 3px solid var(--ink); }
+    .card img { width: 104px; flex: none; align-self: flex-start; height: auto; aspect-ratio: 1; border-bottom: 3px solid var(--ink); border-right: 3px solid var(--ink); border-radius: 0 0 12px 0; }
     .card-body { padding: 12px 14px 14px; }
     .card time { font-size: 11px; padding: 3px 9px; }
     .card h3 { margin-top: 8px; font-size: 17px; }
@@ -305,7 +305,7 @@
 
     <div class="grid">
       <article class="card">
-        <img src="assets/events/badminton.webp" alt="Space Carnival Badminton Tournament poster" loading="lazy" width="436" height="583">
+        <img style="object-position: 50% 100%" src="assets/events/badminton.webp" alt="Space Carnival Badminton Tournament poster" loading="lazy" width="436" height="583">
         <div class="card-body">
           <time datetime="2026-12-12">Sat · 12 Dec</time>
           <h3>Badminton Tournament</h3>
@@ -347,7 +347,7 @@
       </article>
 
       <article class="card">
-        <img src="assets/events/esports.webp" alt="Space Carnival Esports Tournament poster" loading="lazy" width="436" height="582">
+        <img style="object-position: 50% 100%" src="assets/events/esports.webp" alt="Space Carnival Esports Tournament poster" loading="lazy" width="436" height="582">
         <div class="card-body">
           <time datetime="2026-12-16">16 &amp; 17 Dec</time>
           <h3>Esports Tournament</h3>
