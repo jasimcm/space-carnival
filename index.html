@@ -107,6 +107,19 @@
   .cue span { display: inline-block; animation: nudge 1.6s ease-in-out infinite; }
   @keyframes nudge { 50% { translate: 0 4px; } }
 
+  /* sound toggle */
+  .snd {
+    position: fixed; left: 16px; bottom: 16px; z-index: 60; width: 46px; height: 46px; display: grid; place-items: center;
+    border: 3px solid #000; border-radius: 50%; background: var(--cream); box-shadow: 0 4px 0 #000; cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .snd:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #000; }
+  .snd:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+  .snd:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+  .snd svg { width: 22px; height: 22px; fill: none; stroke: #000; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .snd .spk { fill: #000; }
+  .snd .x { display: none; }
+  .snd.off .wave { display: none; } .snd.off .x { display: inline; }
   .confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 
   /* ---------- light it up: real (Blender-rendered) parts on the crayon sky ---------- */
@@ -493,6 +506,9 @@
   </section>
 
 <canvas class="confetti" aria-hidden="true"></canvas>
+<button class="snd" type="button" aria-label="Sound effects" aria-pressed="true">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="spk" d="M4 9h4l5-4v14l-5-4H4z"/><path class="wave" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="x" d="M16 9l6 6M22 9l-6 6"/></svg>
+</button>
 
 <script>
   document.documentElement.classList.add('js');
@@ -526,30 +542,93 @@
     }, { passive: true });
   }
 
-  // confetti
+  // confetti: fluttering paper, curly streamers, dots, stars and sparkles with air drag and sway
   const canvas = document.querySelector('.confetti'), ctx = canvas.getContext('2d');
-  const colors = ['#fde900', '#ff4fb8', '#22c55e', '#38bdf8', '#ff7a1a', '#ffffff'];
-  let bits = [], running = false;
-  const size = () => { const r = devicePixelRatio || 1; canvas.width = innerWidth * r; canvas.height = innerHeight * r; ctx.setTransform(r, 0, 0, r, 0, 0); };
+  // [face, back] pairs so paper pieces flash a darker side as they flip
+  const palette = [['#fde900', '#d8be00'], ['#ff4fb8', '#d12f8f'], ['#38bdf8', '#1d8fc4'], ['#ff7a1a', '#d65a00'],
+                   ['#22c55e', '#15934a'], ['#fefce3', '#d9d4b0'], ['#b794ff', '#8a5df0']];
+  let bits = [], rings = [], running = false, last = 0;
+  const size = () => { const r = Math.min(2, devicePixelRatio || 1); canvas.width = innerWidth * r; canvas.height = innerHeight * r; ctx.setTransform(r, 0, 0, r, 0, 0); };
   addEventListener('resize', size); size();
-  function burst(x, y) {
-    for (let i = 0; i < 46; i++) {
-      const a = -Math.PI / 2 + (Math.random() - .5) * 2.2, v = 5 + Math.random() * 8;
-      bits.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, w: 6 + Math.random() * 7, h: 4 + Math.random() * 6,
-        r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: colors[i % colors.length], life: 1 });
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const kinds = ['paper', 'paper', 'paper', 'paper', 'streamer', 'streamer', 'dot', 'star', 'spark'];
+
+  // burst(x, y, { angle (deg, -90 = straight up), spread (deg), power, count })
+  function burst(x, y, o = {}) {
+    if (window.sfx) sfx.pop();
+    const angle = (o.angle ?? -90) * Math.PI / 180, spread = (o.spread ?? 110) * Math.PI / 180;
+    const power = o.power ?? 1, n = o.count ?? 70;
+    rings.push({ x, y, r: 6, life: 1 });
+    for (let i = 0; i < n; i++) {
+      const a = angle + (Math.random() - .5) * spread, v = rnd(7, 16) * power;
+      const [c, c2] = palette[(Math.random() * palette.length) | 0];
+      bits.push({
+        kind: kinds[(Math.random() * kinds.length) | 0], x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v,
+        size: rnd(7, 13), rot: rnd(0, 6.28), vrot: rnd(-.25, .25), tilt: rnd(0, 6.28), vtilt: rnd(.08, .22),
+        sway: rnd(.6, 1.8), phase: rnd(0, 6.28), c, c2, age: 0, ttl: rnd(2.2, 3.4)
+      });
     }
-    if (!running) { running = true; requestAnimationFrame(tick); }
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(tick); }
   }
-  function tick() {
+
+  function star(r) {
+    ctx.beginPath();
+    for (let i = 0; i < 10; i++) { const a = i * Math.PI / 5 - Math.PI / 2, d = i % 2 ? r * .45 : r; ctx.lineTo(Math.cos(a) * d, Math.sin(a) * d); }
+    ctx.closePath(); ctx.fill();
+  }
+
+  function tick(now) {
+    const dt = Math.min(2.5, (now - last) / 16.67); last = now;
     ctx.clearRect(0, 0, innerWidth, innerHeight);
-    bits = bits.filter(b => b.life > 0 && b.y < innerHeight + 20);
-    for (const b of bits) {
-      b.vy += .32; b.vx *= .985; b.x += b.vx; b.y += b.vy; b.r += b.vr; b.life -= .011;
-      ctx.save(); ctx.globalAlpha = Math.min(1, b.life * 2); ctx.translate(b.x, b.y); ctx.rotate(b.r);
-      ctx.fillStyle = b.c; ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
-      ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.strokeRect(-b.w / 2, -b.h / 2, b.w, b.h); ctx.restore();
+
+    // soft flash ring where the popper went off
+    rings = rings.filter(r => r.life > 0);
+    for (const r of rings) {
+      r.r += 7 * dt; r.life -= .06 * dt;
+      ctx.globalAlpha = Math.max(0, r.life) * .55; ctx.strokeStyle = '#fff4b8'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(r.x, r.y, r.r, 0, 6.283); ctx.stroke();
     }
-    if (bits.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
+
+    bits = bits.filter(b => b.age < b.ttl && b.y < innerHeight + 40);
+    for (const b of bits) {
+      b.age += dt / 60;
+      // air drag: fast out of the popper, then a slow swaying drift down
+      const drag = Math.pow(b.kind === 'dot' ? .955 : .93, dt);
+      b.vx *= drag; b.vy = b.vy * drag + .32 * dt;
+      const terminal = b.kind === 'dot' ? 4.5 : b.kind === 'streamer' ? 2.2 : 2.8;
+      if (b.vy > terminal) b.vy = terminal;
+      b.phase += .05 * dt;
+      b.x += (b.vx + Math.sin(b.phase * 2.2) * b.sway * (b.vy > 0 ? 1 : 0)) * dt; b.y += b.vy * dt;
+      b.rot += b.vrot * dt; b.tilt += b.vtilt * dt;
+      const fade = Math.min(1, (b.ttl - b.age) / .6);
+
+      ctx.save(); ctx.globalAlpha = fade; ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+      if (b.kind === 'paper') {
+        const flip = Math.cos(b.tilt);                         // paper turning over in the air
+        ctx.scale(1, Math.max(.08, Math.abs(flip)));
+        ctx.fillStyle = flip > 0 ? b.c : b.c2;
+        ctx.beginPath(); ctx.roundRect(-b.size * .6, -b.size * .4, b.size * 1.2, b.size * .8, 1.5); ctx.fill();
+      } else if (b.kind === 'streamer') {                     // curly ribbon
+        ctx.strokeStyle = b.c; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath();
+        const L = b.size * 2.6;
+        for (let k = 0; k <= 12; k++) { const t = k / 12; ctx.lineTo(-L / 2 + t * L, Math.sin(t * 9 + b.tilt) * 3.2); }
+        ctx.stroke();
+      } else if (b.kind === 'dot') {
+        ctx.fillStyle = b.c; ctx.beginPath(); ctx.arc(0, 0, b.size * .34, 0, 6.283); ctx.fill();
+      } else if (b.kind === 'star') {
+        ctx.fillStyle = b.c; ctx.scale(1, .55 + .45 * Math.abs(Math.cos(b.tilt))); star(b.size * .75);
+      } else {                                                // twinkling sparkle
+        const tw = .5 + .5 * Math.sin(b.tilt * 3);
+        ctx.fillStyle = '#fffbe0'; ctx.shadowColor = '#fde900'; ctx.shadowBlur = 10;
+        ctx.globalAlpha = fade * tw; ctx.scale(.6 + tw * .5, .6 + tw * .5);
+        ctx.beginPath(); ctx.moveTo(0, -7); ctx.quadraticCurveTo(0, 0, 7, 0); ctx.quadraticCurveTo(0, 0, 0, 7);
+        ctx.quadraticCurveTo(0, 0, -7, 0); ctx.quadraticCurveTo(0, 0, 0, -7); ctx.fill();
+      }
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+    if (bits.length || rings.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
   }
 
   // poke a character: it jumps, spins a little and throws confetti
@@ -576,6 +655,7 @@
     cards.forEach(c => io.observe(c));
   } else cards.forEach(c => c.classList.add('in'));
 </script>
+<script src="assets/sfx.js" defer></script>
 <script src="assets/carnival.js" defer></script>
 </body>
 </html>

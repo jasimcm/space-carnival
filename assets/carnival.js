@@ -4,7 +4,8 @@
 (() => {
   const NS = 'http://www.w3.org/2000/svg';
   const calm = matchMedia('(prefers-reduced-motion: reduce)');
-  const pop = (x, y) => { if (typeof burst === 'function' && !calm.matches) burst(x, y); };
+  const pop = (x, y, o) => { if (typeof burst === 'function' && !calm.matches) burst(x, y, o); else window.sfx?.pop(); };
+  const sfx = new Proxy({}, { get: (_, k) => (...a) => window.sfx?.[k]?.(...a) });
 
   /* ---------------- Light up TinkerSpace ---------------- */
   const lab = document.querySelector('.lab');
@@ -55,7 +56,7 @@
       const L = links[done], p = pt(L.a), q = pt(L.b);
       setD(L.wire, sag(p, q));
       L.wire.classList.add('made');
-      if (!instant) L.wire.classList.add('fresh');
+      if (!instant) { L.wire.classList.add('fresh'); sfx.snap(); }
       done++;
       say(done + 1 + '/3', L.msg);
       hint();
@@ -64,16 +65,23 @@
       if (val && done < links.length) {
         say(done + 1 + '/3', 'Click... nothing. The circuit isn’t closed yet');
         lever.classList.add('nope'); setTimeout(() => lever.classList.remove('nope'), 450);
+        sfx.clack(); sfx.nope();
         return;
       }
       on = val;
       lab.classList.toggle('lit', on);
       lever.classList.toggle('up', on);
+      sfx.clack();
       if (on) {
         say('3/3', 'TinkerSpace is lit! See you on Dec 19 & 20');
+        sfx.powerUp(); sfx.sparkle(.3, 1.2);
+        [1.3, 1.45, 1.6].forEach(d => sfx.boing(d));
         const r = svg.getBoundingClientRect();
-        setTimeout(() => pop(r.left + r.width * .62, r.top + r.height * .35), 500);
-      } else say('3/3', 'Lights off. Flip it again!');
+        setTimeout(() => pop(r.left + r.width * .66, r.top + r.height * .32, { count: 90, power: 1.1 }), 500);
+        // the crew lands with a pair of party poppers on either side of the roof
+        setTimeout(() => { const q = svg.getBoundingClientRect(); pop(q.left + q.width * .38, q.top + q.height * .42, { angle: -55, spread: 40, power: 1.25, count: 55 }); }, 1650);
+        setTimeout(() => { const q = svg.getBoundingClientRect(); pop(q.left + q.width * .97, q.top + q.height * .42, { angle: -125, spread: 40, power: 1.25, count: 55 }); }, 1850);
+      } else { say('3/3', 'Lights off. Flip it again!'); sfx.powerDown(); }
       hint();
     };
     const reset = () => {
@@ -222,12 +230,15 @@
       e.preventDefault();
       current = [form.elements.name.value, [...form.querySelectorAll('input[name=ev]:checked')].map(i => [i.value, i.dataset.when])];
       out.classList.remove('printed', 'done'); after.hidden = true; machine.classList.add('working');
+      sfx.press();
       await draw(canvas, ...current, false);
       void out.offsetWidth; // restart the print animation
       out.classList.add('printed');
+      if (!calm.matches) sfx.print(2.2, 11);
       setTimeout(() => {
         machine.classList.remove('working'); out.classList.add('done'); after.hidden = false;
-        const r = out.getBoundingClientRect(); pop(r.left + r.width / 2, r.top + 40);
+        sfx.ding();
+        const r = out.getBoundingClientRect(); pop(r.left + r.width / 2, r.top + 40, { count: 80 });
       }, calm.matches ? 0 : 2300);
     });
 
