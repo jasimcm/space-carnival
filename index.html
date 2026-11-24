@@ -4,146 +4,143 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Space Carnival — TinkerSpace</title>
-<meta name="description" content="Space Carnival, Dec 19 & 20. Celebrating four years of TinkerSpace.">
-<meta name="theme-color" content="#1c0cec">
+<meta name="description" content="Space Carnival, Dec 19 & 20 at TinkerSpace Kochi. Celebrating four years of TinkerSpace.">
+<meta name="theme-color" content="#5c0fdb">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Homemade+Apple&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* Built from the "Space carnival - 04" Figma file:
+     desktop follows the "TV - 2" frame (1280x720), phones follow "Instagram post - 3" (1080 wide). */
   :root {
-    --sky: #1c0cec;
-    --yellow: #ffd400;
-    --ink: #10082e;
-    --white: #fff;
+    --violet: #5c0fdb;
+    --yellow: #fde900;
+    --cream: #fefce3;
+    --ink: #000;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
-  /* crayon sky straight from the Figma artboard */
-  body {
-    background: var(--sky) url("assets/carnival/sky.jpg") center / cover no-repeat;
-    color: var(--white);
-    font-family: "Poppins", system-ui, sans-serif;
+  body { background: var(--violet); color: #fff; font-family: "Poppins", system-ui, sans-serif; }
+  /* the crayon texture sits on the violet in overlay mode, exactly like the Figma layer */
+  body::before {
+    content: ""; position: fixed; inset: 0; pointer-events: none;
+    background: url("assets/carnival/texture.jpg") center / cover;
+    mix-blend-mode: overlay; transform: rotate(180deg);
   }
 
-  /* 1920x1080 artboard for the text, scaled to fit and pinned to the bottom */
+  /* artboard in Figma units, scaled to fit by the script at the bottom */
   .stage {
-    position: absolute; left: 50%; bottom: 0; z-index: 3;
-    width: 1920px; height: 1080px;
-    transform-origin: 50% 100%;
-    transform: translateX(-50%) scale(var(--s, 1));
+    position: absolute; left: 0; bottom: 0;
+    width: 1280px; height: 720px;
+    transform-origin: 0 100%; transform: scale(var(--s, 1));
   }
   .stage > * { position: absolute; }
+  .stage img { display: block; }
 
-  .brand { left: 96px; top: 70px; width: 330px; }
-  .brand img { display: block; width: 100%; }
+  .brand { left: 61px; top: 37px; width: 196px; }
+  .wordmark { left: 1057px; top: 32px; width: 162px; }
+  .brand img, .wordmark img { width: 100%; }
 
-  .title { left: 84px; top: 150px; width: 640px; }
-  .title img { display: block; width: 100%; filter: drop-shadow(0 8px 0 rgba(16, 8, 46, .35)); }
+  .script {
+    left: 218px; top: 125px; width: 1030px; height: 193px;
+    display: flex; align-items: center; justify-content: center;
+    font: 400 123.5px/108px "Homemade Apple", cursive; white-space: nowrap;
+    transform: rotate(4.74deg);
+  }
+  .script br { display: none; }
 
-  .date { left: 100px; top: 492px; font-weight: 800; font-size: 76px; line-height: 1; letter-spacing: -.03em; }
-  .date span { color: var(--yellow); }
+  .building { left: 0; top: 162px; width: 935px; }
+  .mouse { left: 687px; top: 238px; width: 248px; animation: bob 2.8s ease-in-out infinite; }
+  .frog { left: 2px; top: 64px; width: 165px; transform: rotate(21.88deg); }
+  .frog img { width: 100%; animation: bob 3.4s ease-in-out infinite -1s; }
+  .stage .bear { display: none; }
+  @keyframes bob { 50% { translate: 0 -6px; } }
 
-  .tagline { left: 102px; top: 600px; max-width: 660px; font-weight: 500; font-size: 28px; line-height: 1.35; color: rgba(255, 255, 255, .9); }
+  .when { left: 968px; top: 392px; transform: rotate(-4.34deg); transform-origin: 0 0; }
+  .when .date { font-weight: 800; font-size: 50px; line-height: 1; letter-spacing: -.03em; }
+  .when .date span { color: var(--yellow); }
+  .when .sub { margin-top: 10px; font-weight: 600; font-size: 18px; color: var(--cream); }
 
-  /* badge competition call-to-action, the yellow pill from the Figma posters */
-  .badge-cta {
-    left: 100px; top: 730px; display: inline-flex; align-items: center; gap: 16px; height: 76px; padding: 0 28px 0 12px;
-    border-radius: 999px; text-decoration: none; color: var(--ink); white-space: nowrap;
-    font-weight: 700; font-size: 24px; letter-spacing: -.01em;
-    background: var(--yellow); border: 3px solid var(--ink); box-shadow: 0 7px 0 var(--ink);
+  /* the yellow "Apply with" sticker from the poster, pointing at the badge competition */
+  .sticker {
+    left: 962px; top: 548px; width: 268px; padding: 12px 18px 13px;
+    background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); border-radius: 19px;
+    text-decoration: none; transform: rotate(-4.34deg);
+    box-shadow: 0 6px 0 var(--ink);
     transition: transform .15s, box-shadow .15s;
   }
-  .badge-cta:hover { transform: translateY(-3px); box-shadow: 0 10px 0 var(--ink); }
-  .badge-cta:active { transform: translateY(5px); box-shadow: 0 2px 0 var(--ink); }
-  .badge-cta:focus-visible { outline: 4px solid var(--white); outline-offset: 6px; }
-  .badge-cta .tag {
-    display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 20px; border-radius: 999px;
-    background: var(--white); border: 2px solid var(--ink); font-size: 19px;
-  }
-  .badge-cta .dot { width: 10px; height: 10px; border-radius: 50%; background: #16a34a; }
-  .badge-cta .meta { font-weight: 500; font-size: 20px; opacity: .7; }
-  .badge-cta svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; }
-  .badge-cta:hover svg { transform: translateX(4px); }
+  .sticker:hover { transform: rotate(-4.34deg) translateY(-3px); box-shadow: 0 9px 0 var(--ink); }
+  .sticker:active { transform: rotate(-4.34deg) translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+  .sticker:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+  .sticker b { display: block; font-weight: 700; font-size: 19px; line-height: 1.1; letter-spacing: -.04em; }
+  .sticker small { display: flex; align-items: center; gap: 7px; margin-top: 6px; font-weight: 600; font-size: 14px; letter-spacing: -.02em; }
+  .sticker small i { width: 9px; height: 9px; border-radius: 50%; background: #16a34a; }
+  .sticker small em { margin-left: auto; font-style: normal; font-size: 18px; }
 
-  /* The carnival scene is pinned to the window's bottom-right corner.
-     Characters are placed in % of the building so they stay on the roof at any size. */
-  .scene {
-    position: fixed; right: 0; bottom: 0; z-index: 1; pointer-events: none;
-    width: min(calc(1150px * var(--s, 1)), 100vw); aspect-ratio: 1800 / 1131;
-  }
-  .scene img { position: absolute; display: block; }
-  .scene .building { inset: 0; width: 100%; }
-  .frog     { left: 0;     top: -27%; width: 14.5%; animation: bob 3.4s ease-in-out infinite; }
-  .monkey   { left: 15%;   top: -17%; width: 21%;   animation: sway 4s ease-in-out infinite; transform-origin: 50% 90%; }
-  .mouse    { left: 36.5%; top: -28%; width: 18%;   animation: bob 2.8s ease-in-out infinite -.8s; }
-  .bear     { left: 77%;   top: -38%; width: 16.5%; animation: bob 3.1s ease-in-out infinite -1.6s; }
-  .elephant { left: -23%;  bottom: 0; width: 19%;   animation: drum 1.6s ease-in-out infinite; transform-origin: 50% 100%; }
-  @keyframes bob { 50% { transform: translateY(-4%); } }
-  @keyframes sway { 25% { transform: rotate(-2.5deg); } 75% { transform: rotate(2.5deg); } }
-  @keyframes drum { 50% { transform: scaleY(.97); } }
+  .fade { animation: fade .8s ease-out backwards; }
+  .script.fade { animation-delay: .1s; }
+  .when.fade { animation-delay: .35s; }
+  .sticker.fade { animation-delay: .5s; }
+  @keyframes fade { from { opacity: 0; } }
 
-  .rise { animation: rise .9s cubic-bezier(.2, .8, .2, 1) backwards; }
-  .title.rise { animation-delay: .05s; }
-  .date.rise { animation-delay: .2s; }
-  .tagline.rise { animation-delay: .3s; }
-  .badge-cta.rise { animation-delay: .45s; }
-  @keyframes rise { from { opacity: 0; transform: translateY(24px); } }
-
-  /* Phones and portrait tablets: poster-style stack, sized in vw */
+  /* Phones: the portrait poster, with the date and sticker in the sky between title and roof */
   @media (max-aspect-ratio: 4/5) {
-    .stage { inset: 0; left: 0; width: auto; height: auto; transform: none; }
-    .brand { left: 6vw; top: 7vw; width: 40vw; }
-    .title { left: 5vw; top: 20vw; width: 72vw; }
-    .date { left: 6vw; top: 61vw; font-size: 10vw; }
-    .tagline { left: 6vw; top: 74vw; max-width: 86vw; font-size: 4.2vw; }
-    .badge-cta {
-      left: 6vw; right: 6vw; top: 93vw; height: 14vw; gap: 2vw; padding: 0 3.4vw 0 1.8vw;
-      font-size: 3.15vw; justify-content: space-between; border-width: 2px; box-shadow: 0 1.4vw 0 var(--ink);
-    }
-    .badge-cta .tag { height: 10vw; padding: 0 2.8vw; gap: 1.6vw; font-size: 3.1vw; }
-    .badge-cta .dot { width: 1.8vw; height: 1.8vw; }
-    .badge-cta .meta { display: none; }
-    .badge-cta svg { flex: none; width: 4.6vw; height: 4.6vw; }
-    /* the scene shrinks on short phones so the roof characters never reach the button */
-    .scene { width: min(100vw, (100vh - 112vw) / .87); }
-    .elephant { display: none; }
+    .stage { left: 50%; width: 1080px; height: 2300px; transform-origin: 50% 100%; transform: translateX(-50%) scale(var(--s, 1)); }
+    .brand { left: 36px; top: 124px; width: 268px; }
+    .wordmark { left: 824px; top: 117px; width: 222px; }
+    .script { left: 108px; top: 300px; width: 872px; height: 498px; font-size: 200px; line-height: 181px; transform: rotate(-9.85deg); }
+    .script br { display: inline; }
+    .when { left: 64px; top: 852px; transform: rotate(-4.34deg); }
+    .when .date { font-size: 104px; }
+    .when .sub { font-size: 36px; margin-top: 16px; }
+    .sticker { left: 64px; top: 1060px; width: 600px; padding: 22px 34px 24px; border-width: 5px; border-radius: 34px; box-shadow: 0 11px 0 var(--ink); }
+    .sticker b { font-size: 40px; }
+    .sticker small { font-size: 30px; gap: 14px; margin-top: 10px; }
+    .sticker small i { width: 18px; height: 18px; }
+    .sticker small em { font-size: 38px; }
+    .building { left: -18px; top: 1535px; width: 1233px; }
+    .stage .bear { display: block; left: 641px; top: 1086px; width: 583px; animation: bob 3.1s ease-in-out infinite -1.6s; }
+    .mouse { left: 300px; top: 1304px; width: 479px; }
+    .frog { left: 2px; top: 1272px; width: 290px; }
+    @keyframes bob { 50% { translate: 0 -12px; } }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rise, .scene img { animation: none; }
+    .fade, .mouse, .frog img, .bear { animation: none; }
   }
 </style>
 </head>
 <body>
-  <div class="scene" aria-hidden="true">
-    <img class="elephant" src="assets/carnival/elephant.webp" alt="">
-    <img class="building" src="assets/carnival/building.webp" alt="">
-    <img class="frog" src="assets/carnival/frog.webp" alt="">
-    <img class="monkey" src="assets/carnival/monkey.webp" alt="">
-    <img class="mouse" src="assets/carnival/mouse.webp" alt="">
-    <img class="bear" src="assets/carnival/bear.webp" alt="">
-  </div>
-
   <main class="stage" aria-label="Space Carnival at TinkerSpace Kochi, December 19 and 20">
+    <img class="building" src="assets/carnival/building.webp" alt="Crayon drawing of TinkerSpace strung with fairy lights">
+    <img class="bear" src="assets/carnival/bear.webp" alt="">
+    <img class="mouse" src="assets/carnival/mouse.webp" alt="">
+    <div class="frog"><img src="assets/carnival/frog.webp" alt=""></div>
+
     <div class="brand"><img src="assets/logo.png" alt="TinkerSpace Kochi"></div>
+    <div class="wordmark"><img src="assets/carnival/wordmark.svg" alt=""></div>
 
-    <h1 class="title rise"><img src="assets/carnival/wordmark.svg" alt="Space Carnival"></h1>
+    <h1 class="script fade">Space <br>Carnival</h1>
 
-    <p class="date rise">Dec 19 <span>&amp;</span> 20</p>
+    <div class="when fade">
+      <p class="date">Dec 19 <span>&amp;</span> 20</p>
+      <p class="sub">TinkerSpace turns four · Kochi</p>
+    </div>
 
-    <p class="tagline rise">Four years of TinkerSpace. Come build, play and tinker with the community in Kochi.</p>
-
-    <a class="badge-cta rise" href="badge/">
-      <span class="tag"><i class="dot" aria-hidden="true"></i>Open</span>
-      <span>PCB Badge Design Competition</span>
-      <span class="meta">Closes Nov 26</span>
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+    <a class="sticker fade" href="badge/">
+      <b>PCB Badge Design Competition</b>
+      <small><i aria-hidden="true"></i>Open · closes Nov 26<em aria-hidden="true">→</em></small>
     </a>
   </main>
 
 <script>
-  const fit = () => document.documentElement.style.setProperty('--s', Math.min(innerWidth / 1920, innerHeight / 1080));
+  const portrait = matchMedia('(max-aspect-ratio: 4/5)');
+  const fit = () => {
+    const [w, h] = portrait.matches ? [1080, 2300] : [1280, 720];
+    const el = document.documentElement;
+    el.style.setProperty('--s', Math.min(el.clientWidth / w, el.clientHeight / h));
+  };
   addEventListener('resize', fit);
   fit();
 </script>
