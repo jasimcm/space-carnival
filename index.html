@@ -122,63 +122,6 @@
   .snd.off .wave { display: none; } .snd.off .x { display: inline; }
   .confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
 
-  /* ---------- light it up: real (Blender-rendered) parts on the crayon sky ---------- */
-  .lab-sec { position: relative; padding: 96px 24px 8px; }
-  .lab-sec .events-head { max-width: 1040px; }
-  .lab { position: relative; max-width: 1040px; margin: 0 auto; }
-  .lab-status {
-    position: relative; z-index: 1; display: flex; align-items: center; gap: 10px; width: fit-content; max-width: 100%; margin: 0 auto;
-    padding: 9px 12px 9px 16px; background: var(--cream); color: #000; border: 3px solid #000; border-radius: 999px;
-    box-shadow: 0 5px 0 #000; font-weight: 700; font-size: 15px; transform: rotate(-1.2deg);
-  }
-  .lab-status i { flex: none; width: 12px; height: 12px; border: 2.5px solid #000; border-radius: 50%; background: var(--yellow); }
-  .lab-status b { flex: none; padding: 2px 9px; border-radius: 999px; background: #000; color: #fff; font-size: 12px; }
-  .lab svg { display: block; width: 100%; height: auto; margin-top: -6px; touch-action: none; user-select: none; -webkit-user-select: none; overflow: visible; }
-  .hand { font: 400 21px "Homemade Apple", cursive; fill: var(--cream); pointer-events: none; }
-  .lab-ctrl { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 18px; font-weight: 600; font-size: 15px; color: var(--cream); }
-  .lab-ctrl button { border: 0; background: none; padding: 2px 0; color: #fff; font: inherit; cursor: pointer; text-decoration: underline; text-decoration-color: rgba(255, 255, 255, .45); text-underline-offset: 4px; }
-  .lab-ctrl button:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
-  .lab-ctrl span { opacity: .7; }
-
-  /* night falls only on TinkerSpace; switching on swaps the dark halo for a warm glow */
-  .night { opacity: .9; transition: opacity 1.2s; }
-  .glow { opacity: 0; transition: opacity 1.4s .2s; }
-  .lit .night { opacity: 0; } .lit .glow { opacity: 1; }
-  .bld { filter: brightness(.33) saturate(.5); transition: filter 1.4s; }
-  .lit .bld { filter: none; }
-  .bulb { fill: #ffe45c; opacity: .12; transform-box: fill-box; transform-origin: center; transition: opacity .25s; }
-  .lit .bulb { opacity: 1; transition-delay: calc(var(--i) * 14ms + .3s); animation: twinkle 1.7s ease-in-out var(--tw) infinite; }
-  @keyframes twinkle { 50% { transform: scale(.65); } }
-
-  .crew image { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; transform: translateY(30px) scale(.8); transition: opacity .35s, transform .5s cubic-bezier(.3, 1.6, .5, 1); }
-  .lit .crew image { opacity: 1; transform: none; transition-delay: 1.3s; animation: dance .8s ease-in-out 1.9s infinite alternate; }
-  .lit .crew image:nth-child(2) { transition-delay: 1.45s; animation-delay: 2.1s; }
-  .lit .crew image:nth-child(3) { transition-delay: 1.6s; animation-delay: 2.3s; }
-  @keyframes dance { from { transform: rotate(-7deg); } to { transform: rotate(7deg) translateY(-6px); } }
-
-  /* rubbery cables: black outline, coloured insulation, a soft highlight */
-  .wire path { fill: none; stroke-linecap: round; }
-  .wire path:nth-child(1) { stroke: #000; stroke-width: 13; }
-  .wire path:nth-child(2) { stroke-width: 8.5; }
-  .wire path:nth-child(3) { stroke: #fff; stroke-width: 2.4; opacity: .5; transform: translate(-1.2px, -2.4px); }
-  .wire.red path:nth-child(2) { stroke: #e5383b; }
-  .wire.black path:nth-child(2) { stroke: #2a2a2e; }
-  .wire.live path:nth-child(2) { stroke: var(--yellow); stroke-dasharray: 2 15; }
-  .wire.live path:nth-child(3) { display: none; }
-  .wire.live { opacity: 0; pointer-events: none; } .wire.live.show { opacity: 1; }
-  .wire.fresh { animation: snap .35s ease-out; }
-  @keyframes snap { from { opacity: 0; } }
-
-  .term { fill: rgba(253, 233, 0, 0); stroke: rgba(253, 233, 0, 0); stroke-width: 3; cursor: grab; }
-  .term.next { animation: beckon 1.1s ease-in-out infinite; }
-  @keyframes beckon { 50% { fill: rgba(253, 233, 0, .35); stroke: rgba(253, 233, 0, .9); } }
-  #switch { cursor: pointer; outline: none; }
-  #lever .on { opacity: 0; } #lever.up .on { opacity: 1; } #lever.up .off { opacity: 0; }
-  #lever.nope { animation: shake .4s; }
-  @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-  #switch.next image, #switch:focus-visible image { animation: swglow 1.1s ease-in-out infinite; }
-  @keyframes swglow { 50% { filter: drop-shadow(0 0 9px #fde900); } }
-
   /* ---------- print your ticket ---------- */
   .tix { position: relative; padding: 40px 24px 40px; }
   .tix-grid { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
@@ -229,10 +172,6 @@
     .tix-grid { grid-template-columns: 1fr; gap: 40px; }
   }
   @media (max-width: 560px) {
-    .lab-sec { padding: 64px 6px 8px; }
-    .lab-sec .events-head { padding: 0 10px; }
-    .lab-status { font-size: 12.5px; padding: 7px 10px 7px 12px; }
-    .lab-ctrl { font-size: 13px; padding: 0 10px; }
     .tix { padding: 24px 16px 24px; }
     .tix-form { padding: 20px; }
   }
@@ -324,7 +263,7 @@
   @media (prefers-reduced-motion: reduce) {
     .fade, .script, .char img, .cue span { animation: none; }
     .depth, .card { transition: none; }
-    .lit .bulb, .lit .crew image, .term.next, #switch.next image, .tix-out.printed canvas, .machine.working .machine-img, .machine.working::after { animation: none; }
+    .tix-out.printed canvas, .machine.working .machine-img, .machine.working::after { animation: none; }
     .tix-out.printed canvas { transform: none; }
     .js .card:not(.in) { opacity: 1; transform: rotate(var(--rot)); }
   }
@@ -354,58 +293,9 @@
       <small><i aria-hidden="true"></i>Open · closes Nov 26<em aria-hidden="true">→</em></small>
     </a>
 
-    <a class="cue" href="#lightup">light it up <span aria-hidden="true">↓</span></a>
+    <a class="cue" href="#events">the tournaments <span aria-hidden="true">↓</span></a>
   </div>
   </header>
-
-  <section class="lab-sec" id="lightup">
-    <div class="events-head">
-      <h2>light it up</h2>
-      <p>It's the night before the carnival and TinkerSpace is dark. Wire the battery to the switch, the switch to the fairy lights, then flip it.</p>
-    </div>
-    <div class="lab">
-      <p class="lab-status" aria-live="polite"><i aria-hidden="true"></i><span>Drag a wire from the battery’s + to the switch</span><b>1/3</b></p>
-      <svg viewBox="0 40 1000 600" role="img" aria-label="A circuit toy: a 9V battery, a toggle switch and TinkerSpace strung with fairy lights">
-        <defs>
-          <filter id="glowf" x="-300%" y="-300%" width="700%" height="700%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-          <radialGradient id="nightg"><stop offset="0" stop-color="#0b0426" stop-opacity=".85"/><stop offset=".6" stop-color="#0b0426" stop-opacity=".5"/><stop offset="1" stop-color="#0b0426" stop-opacity="0"/></radialGradient>
-          <radialGradient id="glowg"><stop offset="0" stop-color="#ffd65a" stop-opacity=".55"/><stop offset=".55" stop-color="#ff9f43" stop-opacity=".18"/><stop offset="1" stop-color="#ff9f43" stop-opacity="0"/></radialGradient>
-        </defs>
-        <ellipse class="night" cx="680" cy="390" rx="400" ry="290" fill="url(#nightg)"/>
-        <ellipse class="glow" cx="680" cy="380" rx="420" ry="300" fill="url(#glowg)"/>
-        <image class="bld" href="assets/carnival/building.webp" x="370" y="190" width="620" height="401"/>
-        <g class="bulbs" filter="url(#glowf)"></g>
-        <g class="crew">
-          <image href="assets/carnival/frog.webp" x="358" y="82" width="107" height="140"/>
-          <image href="assets/carnival/mouse.webp" x="790" y="186" width="164" height="161"/>
-          <image href="assets/carnival/bear.webp" x="852" y="8" width="146" height="183"/>
-        </g>
-
-        <image href="assets/carnival/block.webp" x="292" y="486" width="104" height="95.9"/>
-        <image href="assets/carnival/battery.webp" x="6" y="318" width="150" height="249"/>
-        <g class="wire black"><path d="M104.6 340.1 C150 430 290 640 352.2 558"/><path d="M104.6 340.1 C150 430 290 640 352.2 558"/><path d="M104.6 340.1 C150 430 290 640 352.2 558"/></g>
-        <g id="switch" tabindex="0" role="button" aria-label="Flip the switch">
-          <g id="lever">
-            <image class="off" href="assets/carnival/switch-off.webp" x="150" y="250" width="240" height="176.7"/>
-            <image class="on" href="assets/carnival/switch-on.webp" x="150" y="250" width="240" height="176.7"/>
-          </g>
-        </g>
-        <g class="wire red" id="w1"><path/><path/><path/></g>
-        <g class="wire red" id="w2"><path/><path/><path/></g>
-        <g class="wire live" id="wlive"><path/><path/><path/></g>
-
-        <text class="hand" x="22" y="610" transform="rotate(-4 80 604)">9V battery</text>
-        <text class="hand" x="196" y="244" transform="rotate(-5 240 238)">the switch</text>
-        <text class="hand" x="404" y="622" transform="rotate(-3 470 616)">← fairy lights</text>
-
-        <circle class="term" id="t-bat" cx="54.4" cy="328.7" r="30"/>
-        <circle class="term" id="t-swa" cx="192.8" cy="327.5" r="30"/>
-        <circle class="term" id="t-swb" cx="344.5" cy="349.6" r="30"/>
-        <circle class="term" id="t-led" cx="315.3" cy="552.3" r="30"/>
-      </svg>
-      <div class="lab-ctrl"><button type="button" data-auto>do it for me</button><button type="button" data-reset>start over</button><span>drag between the glowing ends, or tap one then the other</span></div>
-    </div>
-  </section>
 
   <main class="events" id="events">
     <div class="events-head">

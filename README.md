@@ -10,14 +10,13 @@ The 3D board and photos come from the 2025 badge, [salmanfarisvp/space-carnival-
 
 Live: https://space-carnival-psi.vercel.app — deploy with `npx vercel deploy --prod` from this folder.
 
-## Landing-page toys
+## Ticket printer
 
-`assets/carnival.js` runs the two toys under the hero: **light it up** (wire a battery and switch to TinkerSpace's fairy lights) and **print your ticket** (a downloadable carnival ticket drawn on canvas).
+`assets/carnival.js` runs **print your ticket**: a downloadable carnival ticket drawn on canvas that slides out of a ticket machine. `assets/sfx.js` synthesizes the sound effects.
 
-The battery, toggle switch, terminal block and ticket machine are Blender renders. To change them, edit the scripts in `tools/blender/` and, from that folder, run:
+The ticket machine is a Blender render. To change it, edit `tools/blender/machine.py` and, from that folder, run:
 
-    /Applications/Blender.app/Contents/MacOS/Blender -b -P parts.py -- "$PWD/out"
     /Applications/Blender.app/Contents/MacOS/Blender -b -P machine.py -- "$PWD/out"
     python3 gen.py
 
-`gen.py` crops the renders into `assets/carnival/` and prints where each terminal and the ticket slot land, for the coordinates in `index.html`.
+`gen.py` crops the render into `assets/carnival/machine.webp` and prints where the ticket slot lands, for `.tix-out` in `index.html`.
