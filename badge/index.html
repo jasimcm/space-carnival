@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Badge Design Competition — Space Carnival</title>
-<meta name="description" content="Design the official PCB badge for TinkerSpace Kochi's Space Carnival. Under ₹50, inside 40 × 40 mm, soldered by every attendee. Submissions close Nov 26, 2026.">
+<meta name="description" content="Design the official PCB badge for TinkerSpace Kochi's Space Carnival. Under ₹50, inside 40 × 40 mm, soldered by every attendee. Submissions closed on Nov 26, 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,800;1,300;1,400;1,800&family=Shrikhand&display=swap" rel="stylesheet">
@@ -338,6 +338,19 @@
   .admit .btn { margin-top: 18px; }
   .admit .btn[aria-disabled="true"] { cursor: not-allowed; opacity: .92; }
   .admit .wins { margin-top: 12px; font-size: 14px; }
+  .admit .thanks { margin-top: 14px; max-width: 46ch; line-height: 1.5; }
+  .admit .thanks a { color: #c0328c; font-weight: 600; }
+  .admit .btn[aria-disabled="true"] { background: #b9b3c9; color: var(--ink); box-shadow: none; transform: none; }
+  /* rubber stamp across the deadline */
+  .date { position: relative; }
+  .stamp {
+    position: absolute; left: 34px; top: 50%; translate: 0 -50%; rotate: -12deg;
+    padding: 2px 14px 4px; border: 4px solid var(--pink); border-radius: 10px; color: var(--pink);
+    font-family: "Shrikhand", serif; font-size: clamp(30px, 3.6vw, 44px); line-height: 1; letter-spacing: .02em; text-transform: uppercase;
+    background: rgba(255, 255, 255, .82); box-shadow: 0 0 0 3px rgba(255, 255, 255, .82); mix-blend-mode: normal;
+    animation: stamp .5s cubic-bezier(.3, 1.6, .5, 1) .5s backwards;
+  }
+  @keyframes stamp { from { scale: 2.2; opacity: 0; } }
 
   .sponsor { margin-top: 56px; text-align: center; }
   .sponsor .body-copy { margin: 10px auto 0; }
@@ -349,8 +362,6 @@
   footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 30px; align-items: center; justify-content: space-between; font-size: 14px; color: var(--soft); }
   footer img { width: 170px; }
 
-  .float-submit { position: fixed; right: 18px; bottom: 18px; z-index: 40; opacity: 0; translate: 0 20px; pointer-events: none; transition: opacity .3s, translate .3s; }
-  .float-submit.show { opacity: 1; translate: 0 0; pointer-events: auto; }
 
   @media (max-width: 980px) {
     .hero-grid, .two, .stall, .judge { grid-template-columns: 1fr; }
@@ -390,7 +401,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .gridbg i { animation: none; opacity: .18; }
-    .cloud, .lights circle, .neon, .lab-status .msg, .lab-status .msg.in { animation: none !important; -webkit-text-fill-color: currentColor; }
+    .cloud, .lights circle, .neon, .stamp, .lab-status .msg, .lab-status .msg.in { animation: none !important; -webkit-text-fill-color: currentColor; }
     .wheel { transition: none; }
   }
 </style>
@@ -419,7 +430,6 @@
           <a href="#brief">The brief</a>
           <a href="#faq">FAQ</a>
           <a href="../">Carnival</a>
-          <a class="btn btn-pink" href="#submit" style="padding:10px 18px;font-size:14px">Submit</a>
         </nav>
       </div>
 
@@ -428,12 +438,13 @@
           <p class="whisper">the space carnival</p>
           <h1 class="groovy">Badge<br>Design<br>Competition</h1>
           <p class="whisper">every attendee solders one,<br>yours could be <em>the one they wear.</em></p>
-          <div class="date" aria-label="Submissions close November 26">
-            <span class="mon">NOV</span><span class="day">26</span><small>submissions<br>close</small>
+          <div class="date" aria-label="Submissions closed on November 26">
+            <span class="mon">NOV</span><span class="day">26</span><small>submissions<br>closed</small>
+            <span class="stamp" aria-hidden="true">Closed</span>
           </div>
           <div class="btns">
             <a class="btn btn-yellow" href="#brief">Read the brief</a>
-            <a class="btn btn-ghost" href="#submit">How to submit</a>
+            <a class="btn btn-ghost" href="../">Back to the Carnival</a>
           </div>
         </div>
 
@@ -586,18 +597,6 @@
       </div>
     </section>
 
-    <section id="call">
-      <div class="wrap">
-        <div class="ask">
-          <svg viewBox="0 0 860 380" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d="M90 340C30 340 10 290 40 255 0 220 20 160 80 160 70 100 130 60 190 85 220 25 320 20 360 70 400 15 500 20 530 75 580 30 680 45 690 110 760 95 820 150 800 200 850 230 840 300 780 320 770 345 740 350 700 340Z"/></svg>
-          <h2 class="groovy">Ask Anything call</h2>
-          <p>An open online call for questions about the competition, PCB design or your idea. A few of us from the team will be there. Bring half-done designs: we'll look at them together.</p>
-          <p class="tba">call date &amp; joining link <em>coming soon</em></p>
-          <p class="ask-deadline">Submissions close <b>Nov 26</b> · <a href="https://chodhyam.tinkerhub.org/nc/form/04c9ef4e-565c-415a-890a-8216d564abe2" target="_blank" rel="noopener">submit on TinkerHub ↗</a></p>
-        </div>
-      </div>
-    </section>
-
     <section id="judging">
       <div class="wrap">
         <h2 class="groovy">How we judge</h2>
@@ -632,7 +631,7 @@
           <details><summary>Battery or USB?</summary><p>Either. A 3 V coin cell, a 90 mAh Li-Po or USB power are all fine; just include the cost in your BOM. A USB badge skips the battery cost and can do something useful when plugged into a computer.</p></details>
           <details><summary>Does the ₹50 include the PCB?</summary><p>Yes. ₹50 is the total for everything on the badge, including the PCB and the battery.</p></details>
           <details><summary>Can I use SMD parts?</summary><p>Yes, but attendees must still get to solder something. Through-hole parts are easier for beginners.</p></details>
-          <details><summary>I've never designed a PCB. Can I still join?</summary><p>Yes. Start with EasyEDA (see <a href="#how">Never made a PCB?</a>) and come to the <a href="#call">Ask Anything call</a>.</p></details>
+          <details><summary>I've never designed a PCB. Can I still join?</summary><p>Yes. Start with EasyEDA (see <a href="#how">Never made a PCB?</a>).</p></details>
           <details><summary>Can I work in a team?</summary><p>Team size is still being decided. We'll update this page soon.</p></details>
         </div>
       </div>
@@ -644,24 +643,14 @@
           <div class="stub">ADMIT ONE</div>
           <div class="in">
             <div>
-              <h2>Your design</h2>
-              <ol class="how">
-                <li><b>Make a public GitHub repo</b> for your badge. Easiest: <a href="https://github.com/jasimcm/space-carnival-badge-template/generate" target="_blank" rel="noopener">start from our template</a>, which has the README, BOM sheet and folders ready.</li>
-                <li><b>Put everything in it:</b> the schematic, Gerbers (zipped), a BOM with quantities, unit prices at 300 units and source links, a render or photo, and a README about your idea.</li>
-                <li><b>Submit the repo link</b> on the TinkerHub app.</li>
-              </ol>
-              <pre class="tree" aria-label="Suggested repo layout">your-badge/
-├─ README.md     idea, theme, how it works
-├─ schematic/    PDF + source files
-├─ gerber/       Gerber zip for Lion Circuits
-├─ bom.csv       qty, unit price @300, source link
-└─ images/       render or photo</pre>
+              <h2>Submissions are closed</h2>
+              <p class="thanks">Thanks to everyone who designed a badge. Entries closed on 26 November, and the winning design will be made for every attendee.</p>
+              <p class="thanks">Curious how a badge repo is put together? <a href="https://github.com/jasimcm/space-carnival-badge-template" target="_blank" rel="noopener">The submission template</a> and <a href="https://github.com/salmanfarisvp/space-carnival-badge-2025" target="_blank" rel="noopener">last year's badge</a> are both open.</p>
             </div>
             <div class="side">
-              <p class="closes">submissions close<b>Nov 26</b></p>
-              <a class="btn btn-pink" href="https://chodhyam.tinkerhub.org/nc/form/04c9ef4e-565c-415a-890a-8216d564abe2" target="_blank" rel="noopener">Submit on TinkerHub ↗</a>
-              <p class="wins">Need an example? <a href="https://github.com/salmanfarisvp/space-carnival-badge-2025" target="_blank" rel="noopener">Last year's badge repo</a> is laid out the same way.</p>
-              <p class="wins">The winning design is made for every attendee, with your name on it.</p>
+              <p class="closes">submissions closed<b>Nov 26</b></p>
+              <span class="btn btn-pink" aria-disabled="true">Submissions closed</span>
+              <p class="wins">See you at the carnival on <b>Dec 19 &amp; 20</b>.</p>
             </div>
           </div>
         </div>
@@ -681,7 +670,6 @@
     </div>
   </footer>
 
-  <a class="btn btn-pink float-submit" href="#submit">Submit your design</a>
 
 <script type="module" src="badge3d.js"></script>
 <script>
@@ -770,13 +758,6 @@
   // how-to bulbs light up as you scroll past
   const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('on')), { rootMargin: '0px 0px -25% 0px' });
   document.querySelectorAll('.bulb-steps li').forEach((li, i) => { li.style.transitionDelay = i * 0.12 + 's'; io.observe(li); });
-
-  // floating submit button once you're past the hero
-  const fs = document.querySelector('.float-submit');
-  let pastHero = false, atSubmit = false;
-  const sync = () => fs.classList.toggle('show', pastHero && !atSubmit);
-  new IntersectionObserver(([e]) => { pastHero = !e.isIntersecting && e.boundingClientRect.top < 0; sync(); }).observe(document.querySelector('.hero'));
-  new IntersectionObserver(([e]) => { atSubmit = e.isIntersecting; sync(); }).observe(document.getElementById('submit'));
 
   document.querySelectorAll('[aria-disabled="true"]').forEach(b => b.addEventListener('click', e => e.preventDefault()));
 </script>
