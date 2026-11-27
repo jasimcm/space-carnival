@@ -64,11 +64,30 @@
 
   /* characters are buttons: poke one and it jumps and throws confetti */
   .char { padding: 0; border: 0; background: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-  .char img { width: 100%; transition: rotate .2s; }
-  .char:hover img { rotate: -5deg; }
+  .char > img, .char .rig { display: block; width: 100%; transition: rotate .2s; }
+  .char:hover > img, .char:hover .rig { rotate: -5deg; }
   .char:focus-visible { outline: 4px solid var(--yellow); outline-offset: 6px; border-radius: 24px; }
   .mouse { left: 687px; top: 238px; width: 248px; --d: 12; }
-  .mouse img { animation: bob 2.8s ease-in-out infinite; }
+  /* the mouse is drawn in layers: it bangs its spanners together, and walks along the roof now and then */
+  .mouse .face { display: block; transition: scale .25s; }
+  .mouse.left .face { scale: -1 1; }
+  .mouse .rig { position: relative; aspect-ratio: 600 / 589; animation: bob 2.8s ease-in-out infinite; }
+  .mouse .rig img { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .mouse .arm-up { transform-origin: 56.2% 41.8%; animation: clap-up .64s ease-in-out infinite; }
+  .mouse .arm-low { transform-origin: 57.8% 53%; animation: clap-low .64s ease-in-out infinite; }
+  .mouse .leg-l { transform-origin: 53% 67.6%; }
+  .mouse .leg-r { transform-origin: 60.3% 67.9%; }
+  @keyframes clap-up { 0%, 100% { rotate: 0deg; } 45% { rotate: 19deg; } 55% { rotate: 17deg; } }
+  @keyframes clap-low { 0%, 100% { rotate: 0deg; } 45% { rotate: -19deg; } 55% { rotate: -17deg; } }
+  .mouse.walking .rig { animation: step .42s ease-in-out infinite; }
+  .mouse.walking .leg-l { animation: stride .84s ease-in-out infinite; }
+  .mouse.walking .leg-r { animation: stride .84s ease-in-out infinite reverse; }
+  .mouse.walking .arm-up { animation: swing-up .84s ease-in-out infinite; }
+  .mouse.walking .arm-low { animation: swing-low .84s ease-in-out infinite; }
+  @keyframes stride { 0%, 100% { rotate: 13deg; } 50% { rotate: -13deg; } }
+  @keyframes step { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -4%; rotate: -2deg; } }
+  @keyframes swing-up { 0%, 100% { rotate: 0deg; } 50% { rotate: 12deg; } }
+  @keyframes swing-low { 0%, 100% { rotate: -12deg; } 50% { rotate: 0deg; } }
   .frog { left: 2px; top: 64px; width: 165px; --r: 21.88deg; --d: 16; }
   .frog img { animation: bob 3.4s ease-in-out infinite -1s; }
   .bear { --d: 18; }
@@ -261,7 +280,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fade, .script, .char img, .cue span { animation: none; }
+    .fade, .script, .char img, .char .rig, .cue span { animation: none !important; }
     .depth, .card { transition: none; }
     .tix-out.printed canvas, .machine.working .machine-img, .machine.working::after { animation: none; }
     .tix-out.printed canvas { transform: none; }
@@ -274,7 +293,10 @@
   <div class="stage" aria-label="Space Carnival at TinkerSpace Kochi, December 19 and 20">
     <img class="building depth" src="assets/carnival/building.webp" alt="Crayon drawing of TinkerSpace strung with fairy lights">
     <button class="char bear depth" type="button" aria-label="Poke the juggling bear"><img src="assets/carnival/bear.webp" alt=""></button>
-    <button class="char mouse depth" type="button" aria-label="Poke the mouse"><img src="assets/carnival/mouse.webp" alt=""></button>
+    <button class="char mouse depth" type="button" aria-label="Poke the mouse"><span class="face"><span class="rig">
+      <img class="leg-l" src="assets/carnival/mouse/leg-l.webp" alt=""><img class="leg-r" src="assets/carnival/mouse/leg-r.webp" alt="">
+      <img src="assets/carnival/mouse/body.webp" alt=""><img class="arm-up" src="assets/carnival/mouse/arm-up.webp" alt=""><img class="arm-low" src="assets/carnival/mouse/arm-low.webp" alt="">
+    </span></span></button>
     <button class="char frog depth" type="button" aria-label="Poke the frog"><img src="assets/carnival/frog.webp" alt=""></button>
 
     <div class="brand"><img src="assets/logo.png" alt="TinkerSpace Kochi"></div>
@@ -524,7 +546,7 @@
   // poke a character: it jumps, spins a little and throws confetti
   document.querySelectorAll('.char').forEach(btn => btn.addEventListener('click', e => {
     if (calm.matches) return;
-    const img = btn.querySelector('img');
+    const img = btn.querySelector('.rig') || btn.querySelector('img');
     img.animate([
       { translate: '0 0', scale: '1', rotate: '0deg' },
       { translate: '0 -18%', scale: '1.08', rotate: '-12deg', offset: .35 },
@@ -534,6 +556,38 @@
     const r = btn.getBoundingClientRect();
     burst(e.clientX || r.left + r.width / 2, e.clientY || r.top + r.height / 3);
   }));
+
+  // the mouse bangs its spanners for a while, strolls up the roof, bangs some more, strolls back
+  (() => {
+    const mouse = document.querySelector('.mouse');
+    if (!mouse.animate) return;
+    // up the slope of the roof, in artboard units (the slope differs between the two layouts)
+    const path = () => portrait.matches ? [-85, 6] : [-150, -84];
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    let at = [0, 0];
+    const walk = async to => {
+      const dist = Math.hypot(to[0] - at[0], to[1] - at[1]);
+      mouse.classList.toggle('left', to[0] < at[0]);
+      mouse.classList.add('walking');
+      const anim = mouse.animate([{ translate: `${at[0]}px ${at[1]}px` }, { translate: `${to[0]}px ${to[1]}px` }],
+        { duration: dist * 17, easing: 'linear', fill: 'forwards' });
+      await anim.finished;
+      mouse.style.translate = `${to[0]}px ${to[1]}px`; anim.cancel();
+      at = to;
+      mouse.classList.remove('walking');
+    };
+    (async () => {
+      await wait(4200);
+      for (;;) {
+        if (calm.matches || document.hidden) { await wait(2000); continue; }
+        await walk(path());
+        await wait(3800);
+        await walk([0, 0]);
+        mouse.classList.remove('left');
+        await wait(5200);
+      }
+    })();
+  })();
 
   // deal the event cards in when they scroll into view
   const cards = document.querySelectorAll('.card');
