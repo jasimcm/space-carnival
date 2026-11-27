@@ -103,7 +103,7 @@
   .when .count b { color: var(--yellow); font-weight: 800; }
   .when .count:empty { display: none; }
 
-  /* the yellow "Apply with" sticker from the poster, pointing at the badge competition */
+  /* the yellow "Apply with" sticker from the poster, pointing at whatever call is open right now */
   .sticker {
     left: 962px; top: 548px; width: 268px; padding: 12px 18px 13px;
     background: var(--yellow); color: var(--ink); border: 3px solid var(--ink); border-radius: 19px;
@@ -140,6 +140,44 @@
   .snd .x { display: none; }
   .snd.off .wave { display: none; } .snd.off .x { display: inline; }
   .confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+
+  /* ---------- call for workshops: the lime poster with its blue checked floor ---------- */
+  .call { padding: 8px 24px 72px; }
+  .call-card {
+    --lime: #61e013; --blue: #1d4fd8;
+    position: relative; max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    background: var(--lime); color: var(--ink); border: 3px solid var(--ink); border-radius: 26px; overflow: hidden;
+    box-shadow: 0 9px 0 var(--ink); transform: rotate(-.8deg);
+  }
+  .call-card img { display: block; width: 100%; height: 100%; object-fit: cover; border-right: 3px solid var(--ink); }
+  .call-body { position: relative; display: flex; flex-direction: column; align-items: flex-start; padding: 44px 48px 92px; }
+  /* the checked floor from the poster */
+  .call-body::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; border-top: 3px solid var(--ink);
+    background: repeating-conic-gradient(var(--blue) 0 25%, var(--lime) 0 50%) 0 0 / 56px 56px;
+  }
+  .call-tag { display: inline-flex; align-items: center; gap: 8px; padding: 5px 13px; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; font-size: 14px; }
+  .call-tag i { width: 9px; height: 9px; border-radius: 50%; background: var(--lime); animation: blink 1.4s ease-in-out infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .call-body h2 { margin: 16px 0 10px; font: 400 clamp(50px, 6vw, 84px)/1.2 "Homemade Apple", cursive; color: var(--blue); transform: rotate(-3deg); transform-origin: 0 50%; }
+  .call-body h2 span { display: block; font: 800 .42em/1 Poppins, sans-serif; letter-spacing: -.03em; color: var(--ink); }
+  .call-body p:not(.call-tag) { max-width: 520px; margin-top: 12px; font-weight: 600; font-size: 16px; line-height: 1.55; }
+  .call-go {
+    margin-top: 24px; display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px;
+    border: 3px solid var(--ink); border-radius: 14px; background: var(--yellow); color: var(--ink);
+    font-weight: 800; font-size: 17px; text-decoration: none; box-shadow: 0 6px 0 var(--ink); transition: transform .15s, box-shadow .15s;
+  }
+  .call-go:hover { transform: translateY(-2px); box-shadow: 0 8px 0 var(--ink); }
+  .call-go:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+  .call-go:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; }
+  @media (max-width: 760px) {
+    .call { padding: 0 16px 48px; }
+    .call-card { grid-template-columns: 1fr; transform: rotate(-.5deg); }
+    .call-card img { height: auto; aspect-ratio: 1; object-position: 50% 30%; border-right: 0; border-bottom: 3px solid var(--ink); }
+    .call-body { padding: 26px 22px 76px; }
+    .call-body p:not(.call-tag) { font-size: 15px; }
+    .call-body::after { height: 44px; background-size: 44px 44px; }
+  }
 
   /* ---------- print your ticket ---------- */
   .tix { position: relative; padding: 40px 24px 40px; }
@@ -280,7 +318,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .fade, .script, .char img, .char .rig, .cue span { animation: none !important; }
+    .fade, .script, .char img, .char .rig, .cue span, .call-tag i { animation: none !important; }
     .depth, .card { transition: none; }
     .tix-out.printed canvas, .machine.working .machine-img, .machine.working::after { animation: none; }
     .tix-out.printed canvas { transform: none; }
@@ -310,9 +348,9 @@
       <p class="count" id="count" aria-live="polite"></p>
     </div>
 
-    <a class="sticker fade" href="badge/">
-      <b>PCB Badge Design Competition</b>
-      <small><i aria-hidden="true"></i>Open · closes Nov 26<em aria-hidden="true">→</em></small>
+    <a class="sticker fade" href="#workshops">
+      <b>Call for Workshops</b>
+      <small><i aria-hidden="true"></i>Open · come teach<em aria-hidden="true">→</em></small>
     </a>
 
     <a class="cue" href="#events">the tournaments <span aria-hidden="true">↓</span></a>
@@ -385,6 +423,19 @@
 
   </main>
 
+  <section class="call" id="workshops">
+    <div class="call-card">
+      <img src="assets/events/workshops.webp" alt="Call for workshops poster: a crayon desk with a plant, a coffee pot and paints on a blue checked floor" loading="lazy" width="720" height="960">
+      <div class="call-body">
+        <p class="call-tag"><i aria-hidden="true"></i>Open now</p>
+        <h2><span>call for</span> workshops</h2>
+        <p>Have a skill, an idea, or something you love teaching? This is your cue. We're looking for people who want to share what they know, introduce something new, and get others learning by doing.</p>
+        <p>Design, art, craft, science and everything in between: we're open to any workshop that sparks curiosity and leaves people with something new to explore.</p>
+        <a class="call-go" href="https://chodhyam.tinkerhub.org/p/workshopsforcarnival" target="_blank" rel="noopener">Propose a workshop <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
   <section class="tix" id="ticket">
     <div class="events-head">
       <h2>print your ticket</h2>
@@ -401,7 +452,7 @@
             <label class="chip"><input type="checkbox" name="ev" value="Men's Football" data-when="13 Dec"><span>Men's Football · 13 Dec</span></label>
             <label class="chip"><input type="checkbox" name="ev" value="Women's Football" data-when="13 Dec"><span>Women's Football · 13 Dec</span></label>
             <label class="chip"><input type="checkbox" name="ev" value="Esports" data-when="16–17 Dec"><span>Esports · 16–17 Dec</span></label>
-            <label class="chip"><input type="checkbox" name="ev" value="Badge Competition" data-when="by 26 Nov"><span>Badge Competition</span></label>
+            <label class="chip"><input type="checkbox" name="ev" value="Workshops" data-when="19–20 Dec"><span>Workshops · 19–20 Dec</span></label>
           </div>
         </fieldset>
         <button class="print" type="submit">Print my ticket</button>
